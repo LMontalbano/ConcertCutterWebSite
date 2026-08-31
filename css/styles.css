@@ -1,0 +1,230 @@
+/* ==========================================================================
+   CONCERTCUTTER OFFICIAL WEBSITE STYLES
+   Charte graphique officielle : Fond Sombre Studio (#0e1116), Accent Bleu (#22b8cf), Coupe/Gap Orange (#ff9248)
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Instrument Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('../fonts/InstrumentSans-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500 700;
+  font-display: swap;
+  src: url('../fonts/JetBrainsMono-latin.woff2') format('woff2');
+}
+
+:root {
+  --app: #0e1116;
+  --surface: #161a22;
+  --surface-raised: #1f242e;
+  --surface-card: rgba(22, 26, 34, 0.85);
+  --border: #2d3542;
+  --border-subtle: #202631;
+  --rule: #202530;
+  --hover: #232a37;
+  --ink: #f1f5f9;
+  --ink-2: #b2becd;
+  --ink-3: #8594a6;
+  --hint: #768597;
+  --on-ink: #0e1116;
+  
+  /* Charte Bleu & Orange */
+  --accent: #22b8cf;
+  --accent-hover: #3bc9db;
+  --accent-soft: rgba(34, 184, 207, 0.12);
+  --accent-glow: rgba(34, 184, 207, 0.35);
+  --on-accent: #061a1e;
+  
+  --gap: #ff9248;
+  --gap-hover: #ffa86e;
+  --gap-soft: rgba(255, 146, 72, 0.12);
+  --gap-glow: rgba(255, 146, 72, 0.35);
+  --gap-row: #1a1614;
+  --gap-rule: #3d2b22;
+  
+  --sans: 'Instrument Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--app);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-mono {
+  font-family: var(--mono);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--app);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-3);
+}
+
+/* Background grid pattern */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(45, 53, 66, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(45, 53, 66, 0.25) 1px, transparent 1px);
+}
+
+/* Glow effects */
+.glow-accent {
+  box-shadow: 0 0 35px -5px var(--accent-glow);
+}
+.glow-accent-lg {
+  box-shadow: 0 0 70px -10px var(--accent-glow);
+}
+.glow-gap {
+  box-shadow: 0 0 35px -5px var(--gap-glow);
+}
+
+.text-glow-accent {
+  text-shadow: 0 0 20px rgba(34, 184, 207, 0.5);
+}
+
+.text-glow-orange {
+  text-shadow: 0 0 20px rgba(255, 146, 72, 0.5);
+}
+
+/* Glassmorphism */
+.glass-panel {
+  background: var(--surface-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.glass-nav {
+  background: rgba(14, 17, 22, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* KBD component */
+.custom-kbd {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Waveform Canvas & Animation */
+.waveform-bar {
+  transition: height 0.2s ease, background-color 0.2s ease;
+}
+
+/* Windows SmartScreen Mockup */
+.smartscreen-window {
+  background: #0078d7;
+  color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.smartscreen-btn-primary {
+  background: #005a9e;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  transition: all 0.15s ease;
+}
+.smartscreen-btn-primary:hover {
+  background: #004578;
+}
+
+.smartscreen-btn-action {
+  background: #ffffff;
+  color: #0078d7;
+  border: none;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+.smartscreen-btn-action:hover {
+  background: #f0f0f0;
+}
+
+/* Tooltip pulse */
+@keyframes pulse-glow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
+
+/* Accordion animation */
+.faq-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-out;
+}
+
+.faq-item.active .faq-content {
+  max-height: 500px;
+  transition: max-height 0.35s ease-in;
+}
+
+.faq-item.active .faq-icon {
+  transform: rotate(180deg);
+}
+
+/* Audio wave animation */
+@keyframes soundwave {
+  0%, 100% { height: 6px; }
+  50% { height: 28px; }
+}
+
+.wave-bar {
+  animation: soundwave 1.2s ease-in-out infinite alternate;
+}
+.wave-bar:nth-child(2) { animation-delay: 0.15s; }
+.wave-bar:nth-child(3) { animation-delay: 0.3s; }
+.wave-bar:nth-child(4) { animation-delay: 0.45s; }
+.wave-bar:nth-child(5) { animation-delay: 0.2s; }
+.wave-bar:nth-child(6) { animation-delay: 0.5s; }
+.wave-bar:nth-child(7) { animation-delay: 0.35s; }
+.wave-bar:nth-child(8) { animation-delay: 0.1s; }

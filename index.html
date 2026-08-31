@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConcertCutter — Découpez vos concerts enregistrés en morceaux parfaits</title>
+  <meta name="description" content="ConcertCutter découpe automatiquement vos enregistrements de concert en pistes audio séparées en retirant les discussions, applaudissements et blancs. Application Windows portable, simple et gratuite.">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ConcertCutter — Découpe intelligente de concerts audio">
+  <meta property="og:description" content="Retirez automatiquement les blancs, discussions et applaudissements de vos concerts enregistrés. Détection par mélange gaussien + Viterbi et retouche visuelle facile.">
+  <meta property="og:image" content="assets/icon_256.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon_32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/icon_64.png">
+  <link rel="shortcut icon" href="assets/icon.ico">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            app: '#0e1116',
+            surface: '#161a22',
+            'surface-raised': '#1f242e',
+            border: '#2d3542',
+            'border-subtle': '#202631',
+            rule: '#202530',
+            hover: '#232a37',
+            ink: '#f1f5f9',
+            'ink-2': '#b2becd',
+            'ink-3': '#8594a6',
+            hint: '#768597',
+            'on-ink': '#0e1116',
+            accent: {
+              DEFAULT: '#22b8cf',
+              hover: '#3bc9db',
+              soft: 'rgba(34, 184, 207, 0.12)',
+              glow: 'rgba(34, 184, 207, 0.35)'
+            },
+            gap: {
+              DEFAULT: '#ff9248',
+              hover: '#ffa86e',
+              soft: 'rgba(255, 146, 72, 0.12)',
+              glow: 'rgba(255, 146, 72, 0.35)'
+            }
+          },
+          fontFamily: {
+            sans: ['"Instrument Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-app text-ink font-sans selection:bg-accent selection:text-on-accent antialiased">
+
+  <!-- =========================================================================
+       HEADER / NAVIGATION
+       ========================================================================= -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-nav border-b border-border-subtle">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-surface-raised border border-border flex items-center justify-center p-1.5 shadow-sm group-hover:border-accent/50 transition-all">
+          <img src="assets/icon_64.png" alt="ConcertCutter Logo" class="w-full h-full object-contain">
+        </div>
+        <div class="flex flex-col">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-base tracking-tight text-ink">ConcertCutter</span>
+            <span class="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded-full bg-accent/15 text-accent border border-accent/30 release-version">v3.0</span>
+          </div>
+          <span class="text-[11px] text-ink-3 hidden sm:inline">Découpe audio intelligente</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium text-ink-2">
+        <a href="#gestes" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">Les 3 gestes</a>
+        <a href="#smartscreen" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">Premier lancement</a>
+        <a href="#features" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">Mode d'emploi</a>
+        <a href="#raccourcis" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">Raccourcis & Gestes</a>
+        <a href="#export" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">Export & Vidéo</a>
+        <a href="#faq" class="px-3 py-1.5 rounded-lg hover:text-ink hover:bg-hover transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="flex items-center gap-3">
+        <!-- GitHub Repo Link (Technical Docs) -->
+        <a href="https://github.com/LMontalbano/ConcertCutter" target="_blank" rel="noopener noreferrer" 
+           class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg border border-border bg-surface text-ink-2 hover:text-ink hover:bg-hover transition-all text-xs font-medium"
+           title="Voir le code source et la documentation technique sur GitHub">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+          <span class="github-stars-count text-[11px] font-mono px-1.5 py-0.2 rounded bg-surface-raised border border-border-subtle text-ink-3 hidden"></span>
+        </a>
+
+        <!-- Primary Header Download CTA -->
+        <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" 
+           class="download-link-exe flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-accent text-on-accent font-semibold text-xs sm:text-sm hover:bg-accent-hover transition-all shadow-sm shadow-accent/20 active:scale-95">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <span>Télécharger .exe</span>
+        </a>
+
+        <!-- Mobile menu toggle button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-ink-2 hover:text-ink hover:bg-hover" aria-label="Ouvrir le menu">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Menu Drawer -->
+  <div id="mobile-menu-drawer" class="fixed inset-0 z-50 bg-app/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 md:hidden flex flex-col p-6">
+    <div class="flex items-center justify-between pb-6 border-b border-border">
+      <div class="flex items-center gap-3">
+        <img src="assets/icon_64.png" alt="ConcertCutter" class="w-8 h-8">
+        <span class="font-bold text-lg text-ink">ConcertCutter</span>
+      </div>
+      <button id="mobile-menu-close" class="p-2 text-ink-2 hover:text-ink" aria-label="Fermer le menu">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <nav class="flex flex-col gap-4 py-8 text-base font-medium text-ink-2">
+      <a href="#gestes" class="mobile-nav-link hover:text-accent transition-colors">Les 3 gestes indispensables</a>
+      <a href="#smartscreen" class="mobile-nav-link hover:text-accent transition-colors">Premier lancement (SmartScreen)</a>
+      <a href="#features" class="mobile-nav-link hover:text-accent transition-colors">Mode d'emploi & Retouche</a>
+      <a href="#raccourcis" class="mobile-nav-link hover:text-accent transition-colors">Tableau des raccourcis</a>
+      <a href="#export" class="mobile-nav-link hover:text-accent transition-colors">Export Audio & Vidéo</a>
+      <a href="#faq" class="mobile-nav-link hover:text-accent transition-colors">Foire Aux Questions</a>
+      <a href="https://github.com/LMontalbano/ConcertCutter" target="_blank" class="mobile-nav-link flex items-center gap-2 text-ink-3 pt-4 border-t border-border">
+        <span>Documentation technique sur GitHub</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      </a>
+    </nav>
+    <div class="mt-auto">
+      <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" 
+         class="download-link-exe flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-accent text-on-accent font-bold text-sm shadow-lg shadow-accent/25">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        <span>Télécharger ConcertCutter.exe</span>
+      </a>
+    </div>
+  </div>
+
+
+  <!-- =========================================================================
+       HERO SECTION
+       ========================================================================= -->
+  <section class="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-grid-pattern">
+    <!-- Ambient glowing backgrounds -->
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute top-1/3 right-10 w-[400px] h-[250px] bg-gap/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+      
+      <!-- Version & Tag Pill -->
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-raised border border-border text-xs text-ink-2 mb-6 backdrop-blur-md shadow-sm">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+        </span>
+        <span>Version 3 disponible</span>
+        <span class="text-border">|</span>
+        <span class="text-ink-3">Détection IA GMM + Viterbi</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink max-w-4xl mx-auto leading-[1.15]">
+        Découpez vos concerts enregistrés en morceaux <span class="text-accent text-glow-accent">parfaits</span>.
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="mt-6 text-base sm:text-lg lg:text-xl text-ink-2 max-w-2xl mx-auto leading-relaxed">
+        Retirez automatiquement les blancs, discussions, applaudissements et accordages. 
+        <strong class="text-ink font-semibold">Aucun seuil à régler</strong> : ajustez et renommez vos pistes en quelques clics à la souris.
+      </p>
+
+      <!-- Primary CTA Box -->
+      <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" 
+           class="download-link-exe group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl bg-accent text-on-accent font-bold text-base sm:text-lg shadow-xl shadow-accent/25 hover:bg-accent-hover transition-all duration-200 active:scale-98 glow-accent">
+          <svg class="w-6 h-6 transform group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          <div class="text-left">
+            <div>Télécharger ConcertCutter.exe</div>
+            <div class="text-xs text-on-accent/80 font-normal font-mono">Windows 10 / 11 · <span class="release-file-size">~25 Mo</span></div>
+          </div>
+        </a>
+
+        <a href="#smartscreen" class="inline-flex items-center gap-2 px-6 py-4 rounded-xl border border-border bg-surface-raised/80 hover:bg-hover hover:border-ink-3/40 text-ink-2 text-sm font-semibold transition-all backdrop-blur-md">
+          <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span>Guide 1<sup>er</sup> lancement (SmartScreen)</span>
+        </a>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-y-2 gap-x-6 text-xs text-ink-3">
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          1 seul fichier portable (zéro installateur)
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          100% Gratuit & Open Source
+        </span>
+        <span class="flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Sauvegarde automatique continue
+        </span>
+      </div>
+
+      <!-- =====================================================================
+           APP PREVIEW / INTERACTIVE WAVEFORM DEMO
+           ===================================================================== -->
+      <div class="mt-14 max-w-5xl mx-auto">
+        <div class="glass-panel rounded-2xl p-2 sm:p-4 shadow-2xl border border-border/80">
+          
+          <!-- Mockup Window Header -->
+          <div class="flex items-center justify-between px-3 py-2 border-b border-border/60 mb-3 bg-surface/60 rounded-t-xl">
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
+              <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
+              <span class="ml-2 text-xs font-mono text-ink-3">ConcertCutter V3 — Live Preview</span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+              <span class="text-[11px] font-mono text-ink-3 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-accent inline-block"></span>
+                Morceaux conservés (Bleu)
+              </span>
+              <span class="text-[11px] font-mono text-ink-3 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-gap inline-block"></span>
+                Blancs & Bruits retirés (Orange)
+              </span>
+            </div>
+          </div>
+
+          <!-- Waveform Canvas Container -->
+          <div class="relative bg-surface-raised rounded-xl p-4 border border-border-subtle overflow-hidden">
+            <div class="flex items-center justify-between mb-2">
+              <div id="waveform-hover-info" class="text-xs text-ink-2 font-medium h-5 flex items-center">
+                <span class="text-ink-3 text-xs">Survolez le tracé audio pour inspecter les coupes automatiques</span>
+              </div>
+              <div class="text-[11px] font-mono text-ink-3">2 h 05 min · 25/25 morceaux validés</div>
+            </div>
+
+            <!-- Canvas Element -->
+            <div class="w-full h-36 sm:h-44 relative cursor-crosshair">
+              <canvas id="hero-waveform-canvas" class="w-full h-full block rounded-lg"></canvas>
+            </div>
+
+            <!-- Mini Tracklist inside mockup -->
+            <div class="mt-4 pt-3 border-t border-border/50 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left">
+              <div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface border border-accent/20">
+                <span class="font-mono text-xs font-bold text-accent bg-accent/10 px-1.5 py-0.5 rounded">01</span>
+                <div class="truncate">
+                  <div class="text-xs font-semibold text-ink truncate">Ouverture & Intro</div>
+                  <div class="text-[10px] text-ink-3 font-mono">00:06 → 04:32 (4m 26s)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface border border-accent/20">
+                <span class="font-mono text-xs font-bold text-accent bg-accent/10 px-1.5 py-0.5 rounded">02</span>
+                <div class="truncate">
+                  <div class="text-xs font-semibold text-ink truncate">Le Long Chemin (Solo)</div>
+                  <div class="text-[10px] text-ink-3 font-mono">05:10 → 09:44 (4m 34s)</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2.5 p-2 rounded-lg bg-surface border border-accent/20">
+                <span class="font-mono text-xs font-bold text-accent bg-accent/10 px-1.5 py-0.5 rounded">03</span>
+                <div class="truncate">
+                  <div class="text-xs font-semibold text-ink truncate">Final Électrique</div>
+                  <div class="text-[10px] text-ink-3 font-mono">10:22 → 15:50 (5m 28s)</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       LES 3 GESTES INDISPENSABLES
+       ========================================================================= -->
+  <section id="gestes" class="py-20 md:py-28 border-t border-border/60 bg-surface/30 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Workflow Simple & Efficace</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mt-2">
+          Trois gestes. C'est tout ce qu'il faut.
+        </h2>
+        <p class="text-ink-2 mt-4 text-base sm:text-lg">
+          L'interface est conçue pour aller droit au but. Pas de menus déroulants interminables, pas de configuration complexe.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Geste 1 : Importer -->
+        <div class="glass-panel rounded-2xl p-8 flex flex-col relative group hover:border-accent/50 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center font-mono font-bold text-lg mb-6 shadow-sm">
+            01
+          </div>
+          <h3 class="text-xl font-bold text-ink mb-3 flex items-center gap-2">
+            <span>Importer</span>
+            <span class="text-xs font-normal text-ink-3 font-mono">WAV</span>
+          </h3>
+          <p class="text-ink-2 text-sm leading-relaxed mb-6">
+            Déposez votre fichier WAV : la forme d'onde complète s'affiche en moins de <strong>5 secondes</strong> pour un concert de 2 heures. Vous pouvez l'écouter immédiatement, <em>avant même d'avoir lancé l'analyse</em>.
+          </p>
+          <div class="mt-auto pt-4 border-t border-border/50 text-xs text-ink-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Lecture fluide sans temps de chargement</span>
+          </div>
+        </div>
+
+        <!-- Geste 2 : Analyser -->
+        <div class="glass-panel rounded-2xl p-8 flex flex-col relative group hover:border-accent/50 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center font-mono font-bold text-lg mb-6 shadow-sm">
+            02
+          </div>
+          <h3 class="text-xl font-bold text-ink mb-3 flex items-center gap-2">
+            <span>Analyser</span>
+            <span class="text-xs font-normal text-ink-3 font-mono">GMM + Viterbi</span>
+          </h3>
+          <p class="text-ink-2 text-sm leading-relaxed mb-6">
+            En un clic, l'algorithme segmente votre enregistrement : morceaux en <strong class="text-accent">bleu</strong>, blancs et bavardages en <strong class="text-gap">orange</strong>. Si vous connaissez le nombre de pistes, saisissez-le pour un calcul sur-mesure.
+          </p>
+          <div class="mt-auto pt-4 border-t border-border/50 text-xs text-ink-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Aucun seuil sonore à régler manuellement</span>
+          </div>
+        </div>
+
+        <!-- Geste 3 : Exporter -->
+        <div class="glass-panel rounded-2xl p-8 flex flex-col relative group hover:border-accent/50 transition-all duration-300">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 border border-accent/30 text-accent flex items-center justify-center font-mono font-bold text-lg mb-6 shadow-sm">
+            03
+          </div>
+          <h3 class="text-xl font-bold text-ink mb-3 flex items-center gap-2">
+            <span>Exporter</span>
+            <span class="text-xs font-normal text-ink-3 font-mono">Audio / Vidéo</span>
+          </h3>
+          <p class="text-ink-2 text-sm leading-relaxed mb-6">
+            Choisissez un dossier de destination. ConcertCutter crée une arborescence propre avec les pistes numérotées, l'album continu propre, la feuille CUE, et même un diaporama vidéo MP4 pour YouTube.
+          </p>
+          <div class="mt-auto pt-4 border-t border-border/50 text-xs text-ink-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Protection contre l'écrasement silencieux</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       GUIDE PREMIER LANCEMENT & SMARTSCREEN INTERACTIF
+       ========================================================================= -->
+  <section id="smartscreen" class="py-20 md:py-28 border-t border-border/60 bg-surface-raised/20 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-14">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Guide Pas-à-Pas</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mt-2">
+          Premier lancement : Débloquer l'alerte Windows
+        </h2>
+        <p class="text-ink-2 mt-4 text-base sm:text-lg">
+          ConcertCutter est un logiciel libre et indépendant. Au premier lancement, Windows affiche un écran de sécurité bleu classique : suivez ces deux étapes simples pour le lancer.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <!-- Left: Educational details -->
+        <div class="lg:col-span-5 space-y-6">
+          
+          <div class="glass-panel p-6 rounded-xl border border-border">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-500/15 border border-blue-500/30 text-blue-400 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-ink text-sm">Pourquoi ce message apparaît ?</h4>
+                <p class="text-ink-3 text-xs leading-relaxed mt-1">
+                  Ce n'est pas un virus. Microsoft Defender SmartScreen avertit simplement qu'il s'agit d'un fichier exécutable récent sans certificat payant (facturé plusieurs centaines d'euros par an).
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 rounded-xl border border-border">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-ink text-sm">100% Sûr et Transparent</h4>
+                <p class="text-ink-3 text-xs leading-relaxed mt-1">
+                  Le code source est intégralement disponible sur GitHub. ConcertCutter fonctionne entièrement hors-ligne et ne modifie aucun fichier système dans Windows.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-panel p-6 rounded-xl border border-border">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </div>
+              <div>
+                <h4 class="font-bold text-ink text-sm">Zéro installation, zéro trace</h4>
+                <p class="text-ink-3 text-xs leading-relaxed mt-1">
+                  Posez le fichier sur le bureau. Pour désinstaller, mettez-le simplement à la corbeille. Rien n'est inscrit dans le registre Windows.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Interactive Simulator Component -->
+        <div class="lg:col-span-7">
+          <div class="bg-surface border border-border rounded-2xl p-6 shadow-2xl">
+            
+            <!-- Step tabs & Reset -->
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-border/60">
+              <div class="flex items-center gap-2">
+                <button id="smartscreen-tab-1" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent text-on-accent transition-all">
+                  Étape 1 : Le message
+                </button>
+                <button id="smartscreen-tab-2" class="px-3 py-1.5 rounded-lg text-xs text-ink-2 bg-surface-raised hover:bg-hover transition-all">
+                  Étape 2 : Le déblocage
+                </button>
+              </div>
+              <button id="smartscreen-reset-btn" class="text-xs text-ink-3 hover:text-ink flex items-center gap-1 font-mono">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                Rejouer
+              </button>
+            </div>
+
+            <!-- Interactive Guide Hint -->
+            <div id="smartscreen-guide-text" class="p-3.5 rounded-xl bg-surface-raised border border-border mb-6">
+              <!-- Dynamically populated by JS -->
+            </div>
+
+            <!-- The Authentic Windows SmartScreen Mockup Window -->
+            <div class="smartscreen-window p-6 sm:p-8 rounded-lg relative select-none">
+              
+              <!-- Windows Defender Title -->
+              <h3 class="text-xl sm:text-2xl font-light tracking-wide text-white mb-4">
+                Windows a protégé votre ordinateur
+              </h3>
+
+              <p class="text-xs sm:text-sm text-white/90 leading-relaxed mb-4">
+                Microsoft Defender SmartScreen a empêché le démarrage d'une application non reconnue. L'exécution de cette application peut mettre votre PC en danger.
+              </p>
+
+              <!-- Step 1 Hotspot: "Informations complémentaires" -->
+              <div class="mb-6">
+                <a href="#" id="smartscreen-info-link" class="text-xs sm:text-sm text-white underline hover:text-white/80 font-medium inline-flex items-center gap-2 cursor-pointer">
+                  <span>Informations complémentaires</span>
+                  <span class="animate-pulse-glow px-2 py-0.5 rounded bg-accent text-on-accent font-mono text-[10px] font-bold">← Cliquez ici</span>
+                </a>
+              </div>
+
+              <!-- Step 2 Revealed Info: App details -->
+              <div id="smartscreen-app-details" class="hidden mb-6 text-xs text-white/90 space-y-1 bg-black/15 p-3 rounded border border-white/10 font-mono">
+                <div><span class="text-white/60">Application :</span> ConcertCutter.exe</div>
+                <div><span class="text-white/60">Éditeur :</span> Éditeur inconnu (Projet Open Source)</div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex items-center justify-end gap-3 pt-4 border-t border-white/20">
+                <div id="smartscreen-run-container" class="hidden">
+                  <button id="smartscreen-run-anyway-btn" class="smartscreen-btn-action px-5 py-2 rounded text-xs sm:text-sm shadow-md">
+                    Exécuter quand même
+                  </button>
+                </div>
+                <button id="smartscreen-dont-run-btn" class="smartscreen-btn-primary px-5 py-2 rounded text-xs sm:text-sm">
+                  Ne pas exécuter
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Success Feedback Toast -->
+            <div id="smartscreen-success-toast" class="hidden mt-4 p-3 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs text-center flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span>Parfait ! ConcertCutter démarre instantanément.</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       FONCTIONNALITÉS & RETOUCHE FACILE
+       ========================================================================= -->
+  <section id="features" class="py-20 md:py-28 border-t border-border/60 bg-surface/30 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Contrôle Total</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mt-2">
+          Tout le confort d'un studio, la simplicité en plus
+        </h2>
+        <p class="text-ink-2 mt-4 text-base sm:text-lg">
+          L'analyse fait le gros du travail. Pour les transitions subtiles ou les solos improvisés, l'interface graphique vous permet d'ajuster chaque détail sans friction.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Feature 1: Sauvegarde invisible -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Rien à enregistrer manuellement</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            Votre travail s'enregistre tout seul deux secondes après chaque geste et à la fermeture. À la séance suivante, le bouton « Reprendre » rouvre votre découpage, vos titres et vos réglages sans réanalyser.
+          </p>
+        </div>
+
+        <!-- Feature 2: Découpe intelligente sans perte -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-gap/15 border border-gap/30 text-gap flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Couper marche partout</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            La touche <kbd class="custom-kbd">C</kbd> pose une frontière sans rien détruire : les deux moitiés restent intactes. La touche <kbd class="custom-kbd">Maj+C</kbd> sépare un morceau en deux pistes distinctes avec le blanc nécessaire.
+          </p>
+        </div>
+
+        <!-- Feature 3: Numérotation persistante -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Numéros de pistes stables</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            Décocher une piste ne décale pas les numéros suivants. La piste 7 reste la numéro 07 même si vous ne l'exportez pas, évitant tout mélange de fichiers dans votre dossier d'exportation.
+          </p>
+        </div>
+
+        <!-- Feature 4: Écoute instantanée au curseur -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Pré-écoute des coupes</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            Cliquez sur une frontière de coupe pour lancer l'écoute 5 secondes avant. Utilisez la touche <kbd class="custom-kbd">B</kbd> pour répéter le passage en boucle et caler la transition au millimètre.
+          </p>
+        </div>
+
+        <!-- Feature 5: Export Vidéo Diaporama -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-gap/15 border border-gap/30 text-gap flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Diaporama Vidéo pour YouTube</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            Ajoutez quelques photos du concert : ConcertCutter génère automatiquement un diaporama vidéo MP4 avec fondu enchaîné et incrustation du nom de chaque morceau à l'écran.
+          </p>
+        </div>
+
+        <!-- Feature 6: Annulation 50 états -->
+        <div class="glass-panel rounded-xl p-6 border border-border flex flex-col">
+          <div class="w-10 h-10 rounded-lg bg-accent/15 border border-accent/30 text-accent flex items-center justify-center mb-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+          </div>
+          <h3 class="font-bold text-lg text-ink mb-2">Historique complet (Ctrl+Z)</h3>
+          <p class="text-ink-3 text-xs leading-relaxed">
+            Toutes les manipulations sont annulables : déplacement de frontière, suppression, coupe, renommage. L'historique conserve vos 50 derniers gestes.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       TABLEAU INTERACTIF DES RACCOURCIS & GESTES
+       ========================================================================= -->
+  <section id="raccourcis" class="py-20 md:py-28 border-t border-border/60 bg-surface-raised/20 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Guide de Prise en Main</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mt-2">
+          Gestes de la souris & Raccourcis clavier
+        </h2>
+        <p class="text-ink-2 mt-4 text-base sm:text-lg">
+          Recherchez une action ou filtrez par catégorie pour trouver instantanément la commande dont vous avez besoin.
+        </p>
+      </div>
+
+      <!-- Search & Filters Toolbar -->
+      <div class="glass-panel p-4 rounded-2xl border border-border mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <!-- Search Input -->
+        <div class="relative w-full md:w-80">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-ink-3">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <input type="text" id="shortcuts-search" placeholder="Rechercher (ex: couper, zoom, espace)..." 
+                 class="w-full pl-10 pr-4 py-2 bg-surface-raised border border-border rounded-xl text-xs sm:text-sm text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all font-sans">
+        </div>
+
+        <!-- Filter Category Tabs -->
+        <div class="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-accent text-on-accent transition-all" data-category="all">
+            Tous
+          </button>
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-raised text-ink-2 hover:bg-hover hover:text-ink transition-all" data-category="lecture">
+            Lecture
+          </button>
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-raised text-ink-2 hover:bg-hover hover:text-ink transition-all" data-category="navigation">
+            Navigation
+          </button>
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-raised text-ink-2 hover:bg-hover hover:text-ink transition-all" data-category="edition">
+            Édition
+          </button>
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-raised text-ink-2 hover:bg-hover hover:text-ink transition-all" data-category="organisation">
+            Titres
+          </button>
+          <button class="shortcut-tab px-3 py-1.5 rounded-lg text-xs font-medium bg-surface-raised text-ink-2 hover:bg-hover hover:text-ink transition-all" data-category="export">
+            Export
+          </button>
+        </div>
+
+        <!-- Counter -->
+        <div id="shortcuts-count" class="text-xs font-mono text-ink-3 hidden lg:block">
+          22 commandes
+        </div>
+      </div>
+
+      <!-- Shortcuts Table Container -->
+      <div class="glass-panel rounded-2xl border border-border overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-border/80 bg-surface text-[11px] font-mono uppercase tracking-wider text-ink-3">
+                <th class="py-3.5 px-4 font-semibold">Action souhaitée</th>
+                <th class="py-3.5 px-4 font-semibold hidden sm:table-cell">Geste souris</th>
+                <th class="py-3.5 px-4 font-semibold">Raccourci clavier</th>
+                <th class="py-3.5 px-4 font-semibold hidden md:table-cell">Détail du comportement</th>
+                <th class="py-3.5 px-4 font-semibold text-right hidden lg:table-cell">Catégorie</th>
+              </tr>
+            </thead>
+            <tbody id="shortcuts-tbody" class="divide-y divide-border/40 font-sans">
+              <!-- Dynamically populated by js/app.js -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state if no search results -->
+        <div id="shortcuts-empty" class="hidden p-12 text-center text-ink-3">
+          <svg class="w-12 h-12 mx-auto mb-3 opacity-40 text-ink-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="font-medium text-ink">Aucun raccourci ne correspond à votre recherche</p>
+          <p class="text-xs mt-1">Essayez un autre mot-clé comme "espace", "couper", "molette" ou "titre".</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       EXPORT AUDIO & VIDÉO
+       ========================================================================= -->
+  <section id="export" class="py-20 md:py-28 border-t border-border/60 bg-surface/30 relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- Text details -->
+        <div class="lg:col-span-6 space-y-6">
+          <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Export Propre & Structuré</span>
+          <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+            Vos fichiers rangés, sans risque d'écrasement
+          </h2>
+          <p class="text-ink-2 text-base sm:text-lg leading-relaxed">
+            ConcertCutter génère automatiquement un dossier complet au nom du concert. Vous y retrouvez ce qui s'écoute dans <code class="text-xs font-mono bg-surface-raised px-1.5 py-0.5 rounded text-accent">audio/</code>, ce qui se regarde dans <code class="text-xs font-mono bg-surface-raised px-1.5 py-0.5 rounded text-gap">video/</code>, et les données techniques dans <code class="text-xs font-mono bg-surface-raised px-1.5 py-0.5 rounded text-ink-3">infos/</code>.
+          </p>
+
+          <div class="space-y-4 pt-2">
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center flex-shrink-0 text-xs font-bold font-mono mt-0.5">✓</div>
+              <div>
+                <strong class="text-ink text-sm block">Pistes séparées & Album complet</strong>
+                <p class="text-ink-3 text-xs">Chaque morceau exporté individuellement en WAV haute fidélité + le concert complet d'un seul tenant avec fondu enchaîné optionnel.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-gap/20 text-gap flex items-center justify-center flex-shrink-0 text-xs font-bold font-mono mt-0.5">✓</div>
+              <div>
+                <strong class="text-ink text-sm block">Diaporama Vidéo pour YouTube</strong>
+                <p class="text-ink-3 text-xs">Donnez 2 ou 3 photos : une image change toutes les 8 secondes en diaporama avec le titre du morceau en cours incrusté en bas.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="w-6 h-6 rounded-full bg-accent/20 text-accent flex items-center justify-center flex-shrink-0 text-xs font-bold font-mono mt-0.5">✓</div>
+              <div>
+                <strong class="text-ink text-sm block">Cue Sheet & Repères</strong>
+                <p class="text-ink-3 text-xs">Un fichier <code class="font-mono text-accent">.cue</code> compatible avec tous les logiciels de gravure CD et lecteurs audiophiles (VLC, Foobar2000).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tree View Mockup -->
+        <div class="lg:col-span-6">
+          <div class="glass-panel p-6 sm:p-8 rounded-2xl border border-border font-mono text-xs text-ink-2 shadow-2xl">
+            <div class="text-xs text-ink-3 mb-3 pb-2 border-b border-border/60 flex items-center justify-between">
+              <span>Arborescence générée</span>
+              <span class="text-[10px] text-accent">Format prêt à l'emploi</span>
+            </div>
+            
+            <div class="space-y-1.5 leading-relaxed text-xs">
+              <div class="text-ink font-semibold flex items-center gap-2">
+                <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span>Concert Live 14.07.2026/</span>
+              </div>
+              
+              <!-- audio folder -->
+              <div class="pl-5 border-l border-border/60 space-y-1">
+                <div class="text-accent font-semibold flex items-center gap-2">
+                  <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                  <span>audio/</span>
+                </div>
+                <div class="pl-5 border-l border-border/60 space-y-1 text-ink-3">
+                  <div class="text-ink-2">├── concert_clean.wav <span class="text-[10px] text-ink-3">(concert complet nettoyé)</span></div>
+                  <div class="text-ink-2">├── 01 - Ouverture.wav</div>
+                  <div class="text-ink-2">├── 02 - Le Long Chemin.wav</div>
+                  <div class="text-ink-2">└── 03 - Final Électrique.wav</div>
+                </div>
+              </div>
+
+              <!-- video folder -->
+              <div class="pl-5 border-l border-border/60 space-y-1 pt-1">
+                <div class="text-gap font-semibold flex items-center gap-2">
+                  <svg class="w-4 h-4 text-gap" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                  <span>video/</span>
+                </div>
+                <div class="pl-5 border-l border-border/60 space-y-1 text-ink-3">
+                  <div class="text-ink-2">└── concert_clean.mp4 <span class="text-[10px] text-gap">(diaporama avec titres)</span></div>
+                </div>
+              </div>
+
+              <!-- infos folder -->
+              <div class="pl-5 border-l border-border/60 space-y-1 pt-1">
+                <div class="text-ink font-semibold flex items-center gap-2">
+                  <svg class="w-4 h-4 text-ink-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                  <span>infos/</span>
+                </div>
+                <div class="pl-5 border-l border-border/60 space-y-1 text-ink-3">
+                  <div class="text-ink-2">├── concert_clean.cue</div>
+                  <div class="text-ink-2">├── reperes.txt</div>
+                  <div class="text-ink-2">└── segments.json</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       FOIRE AUX QUESTIONS (FAQ)
+       ========================================================================= -->
+  <section id="faq" class="py-20 md:py-28 border-t border-border/60 bg-surface-raised/20 relative">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center mb-14">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-accent">Questions Fréquentes</span>
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mt-2">
+          Tout ce que vous devez savoir
+        </h2>
+        <p class="text-ink-2 mt-4 text-base sm:text-lg">
+          Des réponses claires pour utiliser ConcertCutter en toute sérénité.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        
+        <!-- FAQ 1 -->
+        <div class="faq-item glass-panel rounded-xl border border-border overflow-hidden transition-all">
+          <button class="faq-header w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-ink text-sm sm:text-base hover:text-accent transition-colors">
+            <span>Quels types de fichiers audio puis-je importer ?</span>
+            <svg class="faq-icon w-5 h-5 text-ink-3 transform transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-content px-5 pb-5 text-ink-2 text-xs sm:text-sm leading-relaxed border-t border-border/40 pt-3">
+            ConcertCutter prend en charge nativement les fichiers <strong>WAV</strong> de toute taille (16-bit, 24-bit, stéréo ou mono). Le tracé d'un enregistrement complet de plus de 2 heures s'affiche en 5 secondes seulement.
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="faq-item glass-panel rounded-xl border border-border overflow-hidden transition-all">
+          <button class="faq-header w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-ink text-sm sm:text-base hover:text-accent transition-colors">
+            <span>Comment fonctionne l'export vidéo avec FFmpeg ?</span>
+            <svg class="faq-icon w-5 h-5 text-ink-3 transform transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-content px-5 pb-5 text-ink-2 text-xs sm:text-sm leading-relaxed border-t border-border/40 pt-3">
+            Si vous cochez l'option d'export vidéo, ConcertCutter télécharge automatiquement l'utilitaire FFmpeg officiel et le place dans votre dossier d'application sans aucune manipulation technique de votre part.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="faq-item glass-panel rounded-xl border border-border overflow-hidden transition-all">
+          <button class="faq-header w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-ink text-sm sm:text-base hover:text-accent transition-colors">
+            <span>Puis-je interrompre mon travail et le reprendre plus tard ?</span>
+            <svg class="faq-icon w-5 h-5 text-ink-3 transform transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-content px-5 pb-5 text-ink-2 text-xs sm:text-sm leading-relaxed border-t border-border/40 pt-3">
+            Oui, absolument ! Découper un concert de deux heures ne se fait pas d'une traite. L'application sauvegarde vos modifications toutes les 2 secondes. Au lancement suivant, cliquez sur <strong>« Reprendre »</strong> pour rouvrir vos coupes, vos titres et vos sélections exactement là où vous vous étiez arrêté.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="faq-item glass-panel rounded-xl border border-border overflow-hidden transition-all">
+          <button class="faq-header w-full p-5 text-left flex items-center justify-between gap-4 font-semibold text-ink text-sm sm:text-base hover:text-accent transition-colors">
+            <span>Pourquoi ConcertCutter ne nécessite-t-il aucune installation ?</span>
+            <svg class="faq-icon w-5 h-5 text-ink-3 transform transition-transform duration-200 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          </button>
+          <div class="faq-content px-5 pb-5 text-ink-2 text-xs sm:text-sm leading-relaxed border-t border-border/40 pt-3">
+            L'exécutable est entièrement autonome (portable). Tous les moteurs de calcul et l'interface sont embarqués dans un seul fichier d'environ 25 Mo. Vous pouvez le transporter sur une clé USB ou le mettre à la corbeille pour le désinstaller proprement.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       CTA FINAL & LIENS DÉVELOPPEUR
+       ========================================================================= -->
+  <section class="py-20 md:py-28 border-t border-border/60 bg-grid-pattern relative overflow-hidden">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      
+      <!-- Big Download Banner -->
+      <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-border/80 text-center relative overflow-hidden glow-accent-lg">
+        <div class="w-16 h-16 rounded-2xl bg-surface-raised border border-border flex items-center justify-center p-2.5 mx-auto mb-6 shadow-md">
+          <img src="assets/icon_128.png" alt="ConcertCutter" class="w-full h-full object-contain">
+        </div>
+
+        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-ink mb-4">
+          Prêt à découper votre prochain concert ?
+        </h2>
+        <p class="text-ink-2 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
+          Téléchargez ConcertCutter gratuitement dès maintenant. Aucun compte à créer, aucune inscription, aucun abonnement.
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" 
+             class="download-link-exe px-8 py-4 rounded-xl bg-accent text-on-accent font-bold text-base sm:text-lg hover:bg-accent-hover transition-all shadow-xl shadow-accent/25 glow-accent">
+            Télécharger pour Windows (<span class="release-file-size">~25 Mo</span>)
+          </a>
+        </div>
+      </div>
+
+      <!-- Developer Info Box -->
+      <div class="mt-8 p-6 rounded-2xl bg-surface-raised/40 border border-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-ink-3">
+        <div class="flex items-center gap-3">
+          <svg class="w-6 h-6 text-ink-2 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <div>
+            <strong class="text-ink block">Vous êtes développeur ou musicien curieux ?</strong>
+            <span>La documentation technique (architecture spectrale, HMM, Viterbi, CLI) et le code source Python sont sur GitHub.</span>
+          </div>
+        </div>
+        <a href="https://github.com/LMontalbano/ConcertCutter" target="_blank" rel="noopener noreferrer" 
+           class="px-4 py-2 rounded-lg bg-surface border border-border text-ink hover:text-accent hover:border-accent/40 font-semibold transition-all whitespace-nowrap">
+          Voir le GitHub →
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =========================================================================
+       FOOTER
+       ========================================================================= -->
+  <footer class="py-10 border-t border-border bg-app text-xs text-ink-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <img src="assets/icon_32.png" alt="ConcertCutter" class="w-5 h-5">
+        <span class="text-ink font-semibold">ConcertCutter</span>
+        <span>— Projet open source sous licence MIT</span>
+      </div>
+      
+      <div class="flex items-center gap-6">
+        <a href="https://github.com/LMontalbano/ConcertCutter" target="_blank" class="hover:text-ink transition-colors">Dépôt GitHub</a>
+        <a href="https://github.com/LMontalbano/ConcertCutter/releases" target="_blank" class="hover:text-ink transition-colors">Notes de version</a>
+        <a href="https://github.com/LMontalbano/ConcertCutter/issues" target="_blank" class="hover:text-ink transition-colors">Signaler un problème</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/github-release.js"></script>
+  <script src="js/smartscreen-modal.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
