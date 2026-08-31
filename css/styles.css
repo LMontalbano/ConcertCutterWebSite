@@ -198,14 +198,23 @@ body {
 
 /* Accordion animation */
 .faq-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease-out;
+  display: none;
 }
 
 .faq-item.active .faq-content {
-  max-height: 500px;
-  transition: max-height 0.35s ease-in;
+  display: block;
+  animation: faq-fadeIn 0.25s ease-out;
+}
+
+@keyframes faq-fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .faq-item.active .faq-icon {
