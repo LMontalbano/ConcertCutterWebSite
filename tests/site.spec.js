@@ -18,7 +18,7 @@ for (const width of [320, 390, 768, 1024, 1280]) {
       return measured;
     });
     expect(overflow).toBeLessThanOrEqual(0);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("morceau par morceau");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Découpez vos concerts");
     if (width < 1280) {
       const open = page.getByRole("button", { name: "Ouvrir le menu" });
       await expect(open).toBeVisible();
