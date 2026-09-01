@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lmontalbano.github.io/ConcertCutterWebSite/sitemap.xml

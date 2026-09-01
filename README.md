@@ -1,43 +1,53 @@
-# ConcertCutter — Site Web Officiel
+# ConcertCutter — site officiel
 
-Site vitrine et documentation utilisateur pour l'application **[ConcertCutter](https://github.com/LMontalbano/ConcertCutter)**.
+Landing page et guide utilisateur de [ConcertCutter](https://github.com/LMontalbano/ConcertCutter), publiés sur GitHub Pages.
 
-Ce site a été conçu pour permettre aux utilisateurs non-développeurs de :
-1. **Télécharger facilement** l'application sous Windows sans avoir à naviguer dans les Releases GitHub.
-2. **Comprendre et débloquer sereinement** l'avertissement Windows SmartScreen au premier lancement grâce à un simulateur interactif.
-3. **Consulter la documentation utilisateur complète** (les 3 gestes clés, retouche à la souris, recherche instantanée de raccourcis, export vidéo avec diaporama YouTube).
+## Pages
 
----
+- `/` : présentation courte, captures réelles et téléchargement.
+- `/guide/` : démarrage, SmartScreen, édition, raccourcis, export et dépannage.
 
-## 🎨 Charte Graphique & Conception
+Le site reste statique. Tailwind CSS est compilé avant le déploiement : aucun runtime Tailwind n’est chargé dans le navigateur.
 
-- **Palette Studio Sombre** : Fond sombre (`#0e1116`), Accents Bleu Cyan (`#22b8cf`) pour les morceaux conservés et Orange Vif (`#ff9248`) pour les découpes et blancs.
-- **Typographies** : *Instrument Sans* & *JetBrains Mono*.
-- **Architecture Statique Autonome** : 100% sans étape de build, exécutable immédiatement en ouvrant `index.html` dans un navigateur ou déployable sur GitHub Pages.
+## Développement
 
----
-
-## 🚀 Déploiement sur GitHub Pages
-
-1. Rendez-vous dans les paramètres de votre dépôt GitHub (`Settings` > `Pages`).
-2. Sous **Build and deployment** :
-   - **Source** : `Deploy from a branch`
-   - **Branch** : `main` / `root` (dossier `/`)
-3. Cliquez sur **Save**. Le site est en ligne en quelques secondes !
-
----
-
-## 📁 Arborescence du projet
-
+```powershell
+npm ci
+npm run dev
 ```
-ConcertCutterWebSite/
-├── index.html                 # Page d'accueil et documentation complète
-├── css/
-│   └── styles.css             # Styles personnalisés, glassmorphism, animations
-├── js/
-│   ├── app.js                 # Recherche instantanée de raccourcis, FAQ, waveform canvas
-│   ├── github-release.js      # Récupération dynamique de la release & stats GitHub
-│   └── smartscreen-modal.js   # Simulateur interactif de l'alerte Windows SmartScreen
-├── assets/                    # Icônes et logos officiels ConcertCutter
-└── fonts/                     # Polices Instrument Sans et JetBrains Mono (offline ready)
+
+Le serveur local écoute sur `http://127.0.0.1:4173/`.
+
+## Contrôles
+
+```powershell
+npm run build
+npm run validate
+npm test
+npm run lighthouse
 ```
+
+- `validate` contrôle les pages produites, leurs métadonnées et leur HTML.
+- `test` vérifie les largeurs 320, 390, 768, 1024 et 1280 px, le clavier, les URL de téléchargement et axe.
+- `lighthouse` contrôle les objectifs Performance, Accessibilité, Bonnes pratiques et SEO.
+
+## Déploiement GitHub Pages
+
+Le workflow `.github/workflows/pages.yml` compile le site, valide l’artefact `dist/` puis le publie avec GitHub Pages. Dans **Settings → Pages**, sélectionner **GitHub Actions** comme source.
+
+Pour activer la mesure d’audience sans cookies, créer la variable de dépôt `GOATCOUNTER_CODE`. Sans cette variable, aucun script GoatCounter n’est chargé.
+
+## Contrat de release
+
+Chaque release de ConcertCutter doit publier :
+
+- `ConcertCutter.exe` ;
+- `SHA256SUMS.txt` contenant l’empreinte SHA-256 correspondante.
+
+Les boutons du site utilisent l’URL stable :
+
+```text
+https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe
+```
+
+L’API GitHub améliore facultativement la version et la taille affichées. Si elle est indisponible ou limitée, les boutons et les informations de secours restent utilisables.

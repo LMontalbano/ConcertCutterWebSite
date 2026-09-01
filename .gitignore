@@ -1,5 +1,10 @@
 .DS_Store
 Thumbs.db
 node_modules/
+dist/
+test-results/
+playwright-report/
+.lighthouseci/
+.tmp-lighthouse/
 .vscode/
 .idea/
