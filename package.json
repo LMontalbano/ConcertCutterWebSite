@@ -1,0 +1,24 @@
+{
+  "name": "concertcutter-website",
+  "version": "3.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/site.css -o ./dist/css/site.css --minify",
+    "build:site": "node ./scripts/build-site.mjs",
+    "build": "node ./scripts/clean.mjs && npm run build:css && npm run build:site",
+    "dev": "node ./scripts/dev.mjs",
+    "validate": "npm run build && npm run validate:dist",
+    "validate:dist": "html-validate \"dist/**/*.html\" && node ./scripts/validate-site.mjs",
+    "test": "npm run build && playwright test",
+    "lighthouse": "lhci autorun"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.62.1",
+    "@tailwindcss/cli": "^4.3.3",
+    "html-validate": "^11.11.0",
+    "tailwindcss": "^4.3.3"
+  }
+}
