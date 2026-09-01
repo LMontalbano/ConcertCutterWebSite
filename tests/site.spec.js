@@ -8,7 +8,15 @@ for (const width of [320, 390, 768, 1024, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     await page.route("https://api.github.com/**", (route) => route.abort());
     await page.goto("/");
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    // `overflow-x: hidden` sur body écrête scrollWidth : sans neutraliser la
+    // règle le temps de la mesure, ce test ne peut pas échouer.
+    const overflow = await page.evaluate(() => {
+      const previous = document.body.style.overflowX;
+      document.body.style.overflowX = "visible";
+      const measured = document.documentElement.scrollWidth - document.documentElement.clientWidth;
+      document.body.style.overflowX = previous;
+      return measured;
+    });
     expect(overflow).toBeLessThanOrEqual(0);
     await expect(page.getByRole("heading", { level: 1 })).toContainText("Découpez vos concerts");
     if (width < 1280) {
@@ -137,6 +145,64 @@ test("les captures du guide s’agrandissent au clavier", async ({ page }) => {
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(openButton).toBeFocused();
+});
+
+for (const theme of ["dark", "light"]) {
+  test(`l’anneau de focus reste contrasté en thème ${theme}`, async ({ page }) => {
+    await page.addInitScript((selectedTheme) => localStorage.setItem("concertcutter-theme", selectedTheme), theme);
+    await page.route("https://api.github.com/**", (route) => route.abort());
+    await page.goto("/");
+    // Focus réellement clavier : `:focus-visible` ne s’applique pas à un
+    // element.focus() programmatique.
+    await page.keyboard.press("Tab");
+    await expect(page.locator(".skip-link")).toBeFocused();
+    const ratio = await page.locator(".skip-link").evaluate((element) => {
+      const channels = (color) => color.match(/[\d.]+/g).slice(0, 3).map(Number);
+      const luminance = (color) => {
+        const [red, green, blue] = channels(color)
+          .map((value) => value / 255)
+          .map((value) => (value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+      };
+      const outline = luminance(getComputedStyle(element).outlineColor);
+      const background = luminance(getComputedStyle(document.body).backgroundColor);
+      return (Math.max(outline, background) + 0.05) / (Math.min(outline, background) + 0.05);
+    });
+    // WCAG 2.2 — 1.4.11 Contraste des éléments non textuels.
+    expect(ratio).toBeGreaterThanOrEqual(3);
+  });
+}
+
+test.describe("sans JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("le contenu replié reste lisible", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator(".faq-panel").first()).toBeVisible();
+    await page.goto("/guide/");
+    await expect(page.locator("#shortcuts-body tr")).toHaveCount(22);
+    await expect(page.locator("#shortcuts-body tr").first()).toBeVisible();
+    await expect(page.locator(".faq-panel").first()).toBeVisible();
+  });
+});
+
+test("la page 404 du site répond sous le sous-chemin GitHub Pages", async ({ page }) => {
+  const response = await page.goto("/ConcertCutterWebSite/page-qui-nexiste-pas");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Cette page n’existe pas");
+  await expect(page.locator("link[rel=stylesheet]")).toHaveAttribute("href", /css\/site\.css$/);
+  expect(await page.locator("main img").first().evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
+});
+
+test("le filtre des raccourcis masque bien les lignes", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await page.goto("/guide/");
+  await expect(page.locator("#shortcuts-body tr:visible")).toHaveCount(22);
+  await page.getByRole("searchbox", { name: "Rechercher un raccourci" }).fill("annuler");
+  const visible = await page.locator("#shortcuts-body tr:visible").count();
+  expect(visible).toBeGreaterThan(0);
+  expect(visible).toBeLessThan(22);
+  await expect(page.locator("#shortcuts-count")).toContainText(`${visible} commande`);
 });
 
 test("l’animation du mockup respecte la réduction des mouvements", async ({ page }) => {

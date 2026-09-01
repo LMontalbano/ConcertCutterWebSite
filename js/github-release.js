@@ -3,7 +3,12 @@
   const repo = "ConcertCutter";
   const assetName = "ConcertCutter.exe";
   const fallbackUrl = `https://github.com/${owner}/${repo}/releases/latest/download/${assetName}`;
-  const formatBytes = (bytes) => !Number.isFinite(bytes) || bytes <= 0 ? "28,1 Mo" : `${(bytes / 1024 / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Mo`;
+  // Les valeurs de secours sont injectées à la compilation : elles restent
+  // identiques à celles déjà écrites dans le HTML.
+  const dataset = document.currentScript?.dataset ?? {};
+  const fallbackVersion = dataset.fallbackVersion?.trim() || "";
+  const fallbackSize = dataset.fallbackSize?.trim() || "";
+  const formatBytes = (bytes) => !Number.isFinite(bytes) || bytes <= 0 ? fallbackSize : `${(bytes / 1024 / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Mo`;
   document.querySelectorAll(".download-link-exe").forEach((link) => { link.href = fallbackUrl; });
   async function json(url) {
     const controller = new AbortController();
@@ -18,10 +23,12 @@
     try {
       const release = await json(`https://api.github.com/repos/${owner}/${repo}/releases/latest`);
       const asset = release.assets?.find((candidate) => candidate.name === assetName);
-      document.querySelectorAll(".release-version").forEach((element) => { element.textContent = release.tag_name || "v3.0"; });
+      const version = release.tag_name || fallbackVersion;
+      if (version) document.querySelectorAll(".release-version").forEach((element) => { element.textContent = version; });
       if (asset) {
         document.querySelectorAll(".download-link-exe").forEach((link) => { link.href = asset.browser_download_url || fallbackUrl; });
-        document.querySelectorAll(".release-file-size").forEach((element) => { element.textContent = formatBytes(asset.size); });
+        const size = formatBytes(asset.size);
+        if (size) document.querySelectorAll(".release-file-size").forEach((element) => { element.textContent = size; });
       }
     } catch { /* Le contenu de secours reste complet et téléchargeable. */ }
   }

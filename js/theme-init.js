@@ -1,4 +1,7 @@
 (() => {
+  // Ce script bloque le rendu : la classe est posée avant le premier affichage
+  // et sert de bascule aux replis (FAQ, onglets) qui exigent JavaScript.
+  document.documentElement.classList.add("js");
   let theme;
   try {
     theme = localStorage.getItem("concertcutter-theme");
