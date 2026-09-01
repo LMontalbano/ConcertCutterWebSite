@@ -1,56 +1,24 @@
 (() => {
-  const shortcuts = [
-    ["Lire / mettre en pause", "Bouton de transport", ["Espace"], "Démarre ou suspend la lecture.", "lecture"],
-    ["Placer la tête de lecture", "Clic dans la forme d’onde", ["Clic"], "Déplace le curseur sans lancer automatiquement le son.", "lecture"],
-    ["Placer et écouter", "Double-clic dans la forme d’onde", ["Double-clic"], "Déplace le curseur et démarre l’écoute.", "lecture"],
-    ["Promener la tête de lecture", "Saisir puis glisser", ["Glisser"], "Scrubbing fluide dans l’enregistrement.", "lecture"],
-    ["Revenir au début", "Touche Début", ["Origine"], "Revient au début de la section, puis à la précédente.", "navigation"],
-    ["Frontière précédente / suivante", "Flèches directionnelles", ["←", "→"], "Saute directement d’une frontière à l’autre.", "navigation"],
-    ["Boucler un passage", "Bouton Boucler", ["B"], "Répète le passage sous la tête de lecture.", "lecture"],
-    ["Arrêter la lecture", "Bouton de transport", ["Échap"], "Arrête l’écoute en cours.", "lecture"],
-    ["Zoomer / dézoomer", "Molette sur la forme d’onde", ["Molette"], "Change l’échelle temporelle de la vue détaillée.", "navigation"],
-    ["Déplacer la vue", "Glisser dans la vue globale", ["Glisser"], "Déplace la fenêtre temporelle affichée.", "navigation"],
-    ["Déplacer une frontière", "Saisir la poignée", ["Glisser"], "Ajuste précisément le début ou la fin du segment.", "edition"],
-    ["Ajuster par demi-seconde", "Boutons − et +", ["−", "+"], "Recule ou avance la frontière de 0,5 seconde.", "edition"],
-    ["Saisir un horaire précis", "Champ Début ou Fin", ["Saisie"], "Accepte une position temporelle saisie au clavier.", "edition"],
-    ["Ajouter une frontière", "Bouton Couper ici", ["C"], "Crée une coupe à la tête de lecture.", "edition"],
-    ["Séparer un morceau", "Commande de séparation", ["Maj", "C"], "Crée deux pistes distinctes.", "edition"],
-    ["Fusionner deux segments", "Bouton Fusionner", ["Suppr"], "Retire la frontière de fin sélectionnée.", "edition"],
-    ["Garder / supprimer", "Boutons de sort", ["Bascule"], "Change le sort du segment cyan ou orange.", "edition"],
-    ["Renommer un morceau", "Cliquer sur le titre", ["Entrée"], "Valide le nouveau titre ; Échap annule.", "edition"],
-    ["Annuler", "Bouton historique", ["Ctrl", "Z"], "Annule la dernière modification.", "edition"],
-    ["Rétablir", "Bouton historique", ["Ctrl", "Y"], "Rétablit la dernière modification annulée.", "edition"],
-    ["Ouvrir l’export", "Bouton Exporter", ["Exporter"], "Choisit les morceaux, formats et destination.", "export"],
-    ["Sélectionner les pistes", "Cases de la fenêtre d’export", ["Cocher"], "Conserve les numéros d’origine lors d’un export partiel.", "export"],
-  ];
-  const tbody = document.getElementById("shortcuts-body");
+  // Les lignes sont écrites dans le HTML : la table reste lisible sans
+  // JavaScript et indexable par les moteurs. Ce script ne fait que filtrer.
+  const rows = [...document.querySelectorAll("#shortcuts-body tr")];
   const search = document.getElementById("shortcuts-search");
   const count = document.getElementById("shortcuts-count");
   const empty = document.getElementById("shortcuts-empty");
   const tabs = [...document.querySelectorAll(".shortcut-tab")];
-  const labels = { lecture: "Lecture", navigation: "Navigation", edition: "Édition", export: "Export" };
   let category = "all";
-  const makeCell = (className, text) => { const td = document.createElement("td"); td.className = className; td.textContent = text; return td; };
   function render() {
-    if (!tbody) return;
+    if (!rows.length) return;
     const query = search?.value.trim().toLocaleLowerCase("fr") || "";
-    const rows = shortcuts.filter(([action, gesture, keys, detail, itemCategory]) => {
-      const haystack = [action, gesture, ...keys, detail].join(" ").toLocaleLowerCase("fr");
-      return (category === "all" || category === itemCategory) && (!query || haystack.includes(query));
-    });
-    tbody.replaceChildren();
-    for (const [action, gesture, keys, detail, itemCategory] of rows) {
-      const row = document.createElement("tr"); row.className = "hover:bg-raised/50";
-      const actionCell = makeCell("px-4 py-3 text-sm font-bold text-ink", action);
-      const mobileDetail = document.createElement("span"); mobileDetail.className = "mt-1 block text-xs font-normal leading-relaxed text-subtle md:hidden"; mobileDetail.textContent = detail; actionCell.append(mobileDetail);
-      row.append(actionCell, makeCell("gesture-cell px-4 py-3 text-xs text-muted", gesture));
-      const keyCell = document.createElement("td"); keyCell.className = "px-4 py-3";
-      keys.forEach((key) => { const kbd = document.createElement("kbd"); kbd.className = "kbd mr-1"; kbd.textContent = key; keyCell.append(kbd); });
-      row.append(keyCell, makeCell("detail-cell px-4 py-3 text-xs leading-relaxed text-subtle", detail), makeCell("category-cell px-4 py-3 text-right text-xs font-bold text-muted", labels[itemCategory]));
-      tbody.append(row);
+    let visible = 0;
+    for (const row of rows) {
+      const matches = (category === "all" || row.dataset.category === category)
+        && (!query || (row.dataset.search || "").includes(query));
+      row.hidden = !matches;
+      if (matches) visible += 1;
     }
-    if (count) count.textContent = `${rows.length} commande${rows.length > 1 ? "s" : ""}`;
-    empty?.classList.toggle("hidden", rows.length !== 0);
+    if (count) count.textContent = `${visible} commande${visible > 1 ? "s" : ""}`;
+    empty?.classList.toggle("hidden", visible !== 0);
   }
   search?.addEventListener("input", render);
   tabs.forEach((tab) => tab.addEventListener("click", () => {

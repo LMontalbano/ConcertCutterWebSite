@@ -6,8 +6,12 @@
 
   function applyTheme(theme, { persist = false } = {}) {
     root.dataset.theme = theme;
-    const themeColor = document.querySelector('meta[name="theme-color"]');
-    if (themeColor) themeColor.setAttribute("content", theme === "light" ? "#f4f7fa" : "#0e1116");
+    // Le HTML porte une paire de balises conditionnées par prefers-color-scheme :
+    // dès qu’un thème est appliqué, le choix explicite doit primer.
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.removeAttribute("media");
+      meta.setAttribute("content", theme === "light" ? "#f4f7fa" : "#0e1116");
+    });
     if (persist) {
       try { localStorage.setItem("concertcutter-theme", theme); } catch { /* Storage may be disabled. */ }
     }

@@ -6,25 +6,28 @@
   <title>ConcertCutter — Découpez vos concerts en pistes propres</title>
   <meta name="description" content="ConcertCutter repère les passages à retirer dans un concert enregistré, puis vous laisse ajuster chaque coupe avant l’export en WAV ou MP4. Gratuit, open source et local sous Windows.">
   <link rel="canonical" href="https://lmontalbano.github.io/ConcertCutterWebSite/">
-  <meta name="theme-color" content="#0e1116">
+  <meta name="theme-color" content="#f4f7fa" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="ConcertCutter">
   <meta property="og:title" content="ConcertCutter — Découpez vos concerts. Gardez la musique.">
   <meta property="og:description" content="Transformez un long enregistrement en pistes propres, tout en gardant le contrôle sur chaque coupe.">
   <meta property="og:url" content="https://lmontalbano.github.io/ConcertCutterWebSite/">
-  <meta property="og:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v2.png">
+  <meta property="og:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v3.jpg">
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Interface sombre de ConcertCutter avec la liste des segments et une grande forme d’onde cyan et orange">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ConcertCutter — Découpez vos concerts. Gardez la musique.">
   <meta name="twitter:description" content="Transformez un long enregistrement en pistes propres, tout en gardant le contrôle sur chaque coupe.">
-  <meta name="twitter:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v2.png">
+  <meta name="twitter:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v3.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon_32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icon_64.png">
   <link rel="shortcut icon" href="assets/icon.ico">
   <link rel="preload" href="fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/JetBrainsMono-latin.woff2" as="font" type="font/woff2" crossorigin>
   <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/site.css">
   <script type="application/ld+json">
@@ -34,7 +37,7 @@
     "name": "ConcertCutter",
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "Windows 10, Windows 11",
-    "softwareVersion": "3.0",
+    "softwareVersion": "__APP_VERSION__",
     "description": "Application locale pour analyser un concert enregistré, corriger les coupes et exporter des pistes audio ou vidéo.",
     "downloadUrl": "https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe",
     "codeRepository": "https://github.com/LMontalbano/ConcertCutter",
@@ -42,8 +45,48 @@
     "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}
   }
   </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Quels fichiers puis-je ouvrir ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "L’interface graphique ouvre les enregistrements WAV. Les outils en ligne de commande couvrent des traitements plus avancés décrits sur GitHub."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Mes enregistrements sont-ils envoyés en ligne ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non. L’analyse, l’écoute, les corrections et les exports restent sur votre ordinateur. Seule l’installation optionnelle de FFmpeg nécessite un téléchargement."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Que faut-il pour créer une vidéo ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ajoutez au moins une image de fond et disposez de FFmpeg. S’il manque, ConcertCutter peut proposer de l’installer avant l’export."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment désinstaller ConcertCutter ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "L’application est portable. Supprimez simplement ConcertCutter.exe. Le guide indique aussi où retirer les sauvegardes locales si vous souhaitez tout effacer."
+        }
+      }
+    ]
+  }
+  </script>
   <script src="js/site.js" defer></script>
-  <script src="js/github-release.js" defer></script>
+  <script src="js/github-release.js" defer data-fallback-version="v__APP_VERSION__" data-fallback-size="__DOWNLOAD_SIZE__"></script>
   <script src="js/analytics.js" defer data-goatcounter-code="__GOATCOUNTER_CODE__"></script>
 </head>
 <body>
@@ -53,7 +96,7 @@
       <a href="./" class="flex min-w-0 items-center gap-2.5" aria-label="ConcertCutter, accueil">
         <span class="flex size-9 shrink-0 items-center justify-center rounded-xl border border-border bg-raised p-1.5"><img src="assets/icon_64.png" width="64" height="64" alt="" class="size-full object-contain"></span>
         <span class="min-w-0">
-          <span class="flex items-center gap-2"><span class="brand-name truncate font-bold tracking-tight text-ink">ConcertCutter</span><span class="release-version shrink-0 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-accent">v3.0</span></span>
+          <span class="flex items-center gap-2"><span class="brand-name truncate font-bold tracking-tight text-ink">ConcertCutter</span><span class="release-version shrink-0 rounded-full border border-accent/30 bg-accent/10 px-1.5 py-0.5 font-mono text-[10px] font-bold text-accent">v__APP_VERSION__</span></span>
           <span class="brand-subtitle block text-[11px] text-subtle">Découpe audio locale</span>
         </span>
       </a>
@@ -83,17 +126,17 @@
     <section class="grid-bg hero-glow relative overflow-hidden border-b border-rule pt-28 pb-18 sm:pt-36 sm:pb-24">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-4xl text-center">
-          <div class="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-raised/80 px-3.5 py-1.5 text-xs text-muted"><span class="size-2 rounded-full bg-accent" aria-hidden="true"></span><span class="release-version font-semibold text-ink">v3.0</span><span aria-hidden="true">·</span><span>Windows 10 / 11</span><span aria-hidden="true">·</span><span>Gratuit et open source</span></div>
+          <div class="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-raised/80 px-3.5 py-1.5 text-xs text-muted"><span class="size-2 rounded-full bg-accent" aria-hidden="true"></span><span class="release-version font-semibold text-ink">v__APP_VERSION__</span><span aria-hidden="true">·</span><span>Windows 10 / 11</span><span aria-hidden="true">·</span><span>Gratuit et open source</span></div>
           <h1 class="text-4xl font-extrabold leading-[1.05] tracking-[-0.045em] text-ink sm:text-6xl lg:text-7xl">Découpez vos concerts.<br><span class="text-accent">Gardez la musique.</span></h1>
           <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">ConcertCutter repère les passages à retirer, puis vous laisse écouter, ajuster et nommer chaque piste avant l’export. Vos fichiers restent sur votre ordinateur.</p>
           <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
-            <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary px-6 py-4 text-base" data-goatcounter-click="download-hero"><svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>Télécharger pour Windows <span class="release-file-size font-mono text-xs opacity-75">28,1 Mo</span></a>
+            <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary px-6 py-4 text-base" data-goatcounter-click="download-hero"><svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>Télécharger pour Windows <span class="release-file-size font-mono text-xs opacity-75">__DOWNLOAD_SIZE__</span></a>
             <a href="guide/" class="btn-secondary px-6 py-4" data-goatcounter-click="open-guide">Voir le guide complet</a>
           </div>
           <ul class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-subtle" aria-label="Informations essentielles"><li>✓ Un fichier portable</li><li>✓ Aucun compte</li><li>✓ Sauvegarde automatique</li><li>✓ Sans installation</li></ul>
         </div>
-        <figure id="demo" class="mx-auto mt-14 max-w-6xl scroll-mt-24" aria-label="Aperçu de l’interface ConcertCutter">
-          <div class="product-mockup">
+        <figure id="demo" class="mx-auto mt-14 max-w-6xl scroll-mt-24">
+          <div class="product-mockup" aria-hidden="true">
             <div class="mock-windowbar">
               <div class="flex min-w-0 items-center gap-2"><span class="mock-window-dot bg-[#ff6b6b]"></span><span class="mock-window-dot bg-[#ffd43b]"></span><span class="mock-window-dot bg-[#51cf66]"></span><span class="ml-2 truncate font-mono text-[10px] text-subtle sm:text-xs">ConcertCutter — concert_live.wav</span></div>
               <div class="hidden items-center gap-2 text-[10px] text-subtle sm:flex"><span class="size-1.5 rounded-full bg-accent"></span>Analyse terminée · 12 pistes</div>
@@ -114,7 +157,7 @@
                 </div>
                 <div class="mock-overview" aria-hidden="true"><span class="w-[16%]"></span><i></i><span class="w-[20%]"></span><i></i><span class="w-[18%]"></span><i></i><span class="w-[25%]"></span><i></i><span class="flex-1"></span></div>
                 <div class="mock-editor">
-                  <div class="mb-3 flex items-start justify-between gap-3"><div><span class="font-mono text-[9px] uppercase tracking-[0.16em] text-accent">Frontière 04</span><h3 class="mt-1 text-left text-sm font-bold text-ink sm:text-base">Ajuster la transition</h3></div><span class="rounded-full border border-accent/25 bg-accent/10 px-2 py-1 font-mono text-[9px] text-accent">Confiance élevée</span></div>
+                  <div class="mb-3 flex items-start justify-between gap-3"><div><span class="font-mono text-[9px] uppercase tracking-[0.16em] text-accent">Frontière 04</span><p class="mt-1 text-left text-sm font-bold text-ink sm:text-base">Ajuster la transition</p></div><span class="rounded-full border border-accent/25 bg-accent/10 px-2 py-1 font-mono text-[9px] text-accent">Confiance élevée</span></div>
                   <div class="mock-waveform" aria-hidden="true">
                     <canvas id="mock-waveform-canvas"></canvas><span class="mock-cut-zone"></span><span class="mock-boundary mock-boundary-start"></span><span class="mock-boundary mock-boundary-end"></span><span class="mock-playhead"></span>
                     <span class="mock-cut-label">Discussion retirée · 00:08</span>
@@ -162,7 +205,7 @@
         </div><p class="mt-8 text-center"><a href="guide/#depannage" class="font-bold text-accent hover:text-accent-hover" data-goatcounter-click="open-guide">Consulter tout le guide et le dépannage →</a></p>
       </div>
     </section>
-    <section class="grid-bg hero-glow py-20 sm:py-24"><div class="mx-auto max-w-4xl px-4 text-center sm:px-6"><div class="glass-card rounded-3xl p-7 sm:p-12"><img src="assets/icon_128.png" width="64" height="64" alt="" class="mx-auto size-16 rounded-2xl"><h2 class="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">Votre concert, prêt à devenir un album.</h2><p class="mx-auto mt-4 max-w-xl text-muted">Téléchargez ConcertCutter, ouvrez votre WAV et gardez le dernier mot sur chaque coupe.</p><a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary mt-7" data-goatcounter-click="download-final">Télécharger pour Windows <span class="release-file-size font-mono text-xs">28,1 Mo</span></a></div></div></section>
+    <section class="grid-bg hero-glow py-20 sm:py-24"><div class="mx-auto max-w-4xl px-4 text-center sm:px-6"><div class="glass-card rounded-3xl p-7 sm:p-12"><img src="assets/icon_128.png" width="64" height="64" alt="" class="mx-auto size-16 rounded-2xl"><h2 class="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">Votre concert, prêt à devenir un album.</h2><p class="mx-auto mt-4 max-w-xl text-muted">Téléchargez ConcertCutter, ouvrez votre WAV et gardez le dernier mot sur chaque coupe.</p><a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary mt-7" data-goatcounter-click="download-final">Télécharger pour Windows <span class="release-file-size font-mono text-xs">__DOWNLOAD_SIZE__</span></a></div></div></section>
   </main>
   <footer class="border-t border-rule py-10 text-sm text-subtle">
     <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
