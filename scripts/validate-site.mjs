@@ -32,6 +32,24 @@ requireIn(guide, "guide", /id="shortcuts-search"/, "recherche des raccourcis abs
 requireIn(guide, "guide", /<tbody id="shortcuts-body"[^>]*>\s*<tr/, "table des raccourcis non pré-rendue");
 requireIn(notFound, "404", /<main\b/, "élément <main> absent");
 
+// Les questions existent en double : dans l’accordéon et dans le JSON-LD.
+// Google sanctionne une FAQ structurée qui ne correspond pas à la page.
+const structurees = [...landing.matchAll(/"@type": "Question",\s*"name": "([^"]+)"/g)].map((match) => match[1]);
+const affichees = [...landing.matchAll(/id="faq-[a-z-]+-trigger">([^<]+)</g)].map((match) => match[1]);
+if (!structurees.length) {
+  failures.push("landing: aucune question dans les données structurées");
+}
+for (const question of structurees) {
+  if (!affichees.includes(question)) {
+    failures.push(`landing: la question « ${question} » est dans le JSON-LD mais pas dans la FAQ visible`);
+  }
+}
+for (const question of affichees) {
+  if (!structurees.includes(question)) {
+    failures.push(`landing: la question « ${question} » est dans la FAQ visible mais pas dans le JSON-LD`);
+  }
+}
+
 // GitHub Pages sert 404.html à n’importe quelle profondeur : cette page est la
 // seule à devoir pointer ses ressources en absolu. Si le dépôt est renommé ou
 // passe sur un domaine dédié, la 404 perdrait sa mise en forme en silence.

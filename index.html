@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ConcertCutter — Découpez vos concerts en pistes propres</title>
-  <meta name="description" content="ConcertCutter repère les passages à retirer dans un concert enregistré, puis vous laisse ajuster chaque coupe avant l’export en WAV ou MP4. Gratuit, open source et local sous Windows.">
+  <title>ConcertCutter — Découpez un concert enregistré en morceaux</title>
+  <meta name="description" content="ConcertCutter repère les applaudissements, les annonces et les accordages entre les morceaux d’un concert enregistré, puis vous laisse corriger chaque coupe avant l’export en WAV ou MP4. Gratuit, open source, et rien ne quitte votre ordinateur.">
   <link rel="canonical" href="https://lmontalbano.github.io/ConcertCutterWebSite/">
   <meta name="theme-color" content="#f4f7fa" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)">
@@ -12,7 +12,7 @@
   <meta property="og:locale" content="fr_FR">
   <meta property="og:site_name" content="ConcertCutter">
   <meta property="og:title" content="ConcertCutter — Découpez vos concerts. Gardez la musique.">
-  <meta property="og:description" content="Transformez un long enregistrement en pistes propres, tout en gardant le contrôle sur chaque coupe.">
+  <meta property="og:description" content="D’un enregistrement d’une heure à des morceaux séparés et nommés, sans les applaudissements ni les annonces. Vous gardez le dernier mot sur chaque coupe.">
   <meta property="og:url" content="https://lmontalbano.github.io/ConcertCutterWebSite/">
   <meta property="og:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v3.jpg">
   <meta property="og:image:type" content="image/jpeg">
@@ -21,7 +21,7 @@
   <meta property="og:image:alt" content="Interface sombre de ConcertCutter avec la liste des segments et une grande forme d’onde cyan et orange">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ConcertCutter — Découpez vos concerts. Gardez la musique.">
-  <meta name="twitter:description" content="Transformez un long enregistrement en pistes propres, tout en gardant le contrôle sur chaque coupe.">
+  <meta name="twitter:description" content="D’un enregistrement d’une heure à des morceaux séparés et nommés, sans les applaudissements ni les annonces. Vous gardez le dernier mot sur chaque coupe.">
   <meta name="twitter:image" content="https://lmontalbano.github.io/ConcertCutterWebSite/assets/og-concertcutter-v3.jpg">
   <link rel="icon" type="image/png" sizes="32x32" href="assets/icon_32.png">
   <link rel="icon" type="image/png" sizes="64x64" href="assets/icon_64.png">
@@ -38,7 +38,7 @@
     "applicationCategory": "MultimediaApplication",
     "operatingSystem": "Windows 10, Windows 11",
     "softwareVersion": "__APP_VERSION__",
-    "description": "Application locale pour analyser un concert enregistré, corriger les coupes et exporter des pistes audio ou vidéo.",
+    "description": "Application locale qui découpe un concert enregistré en morceaux, retire les applaudissements, les annonces et les accordages, et exporte des pistes audio ou vidéo après votre relecture.",
     "downloadUrl": "https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe",
     "codeRepository": "https://github.com/LMontalbano/ConcertCutter",
     "license": "https://opensource.org/license/mit",
@@ -52,10 +52,26 @@
     "mainEntity": [
       {
         "@type": "Question",
+        "name": "Windows bloque-t-il l’application ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Au premier lancement, c’est probable. L’exécutable n’est pas signé, alors SmartScreen affiche un avertissement parce qu’il ne reconnaît pas l’éditeur. Choisissez « Informations complémentaires » puis « Exécuter quand même », après avoir vérifié que le fichier vient bien de la release officielle. Le guide détaille l’écran et la vérification de l’empreinte SHA-256."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Le découpage automatique est-il toujours juste ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Non, et l’application est faite pour ça. L’analyse s’appuie sur la baisse de niveau entre les morceaux : une captation de salle, deux morceaux enchaînés sans respiration ou une voix par-dessus la musique demandent des corrections. Toutes les frontières restent déplaçables, et vous pouvez en ajouter ou en retirer."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Quels fichiers puis-je ouvrir ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "L’interface graphique ouvre les enregistrements WAV. Les outils en ligne de commande couvrent des traitements plus avancés décrits sur GitHub."
+          "text": "L’interface graphique ouvre les enregistrements WAV. Les outils en ligne de commande, décrits sur GitHub, couvrent le traitement par lot et des réglages plus fins."
         }
       },
       {
@@ -63,7 +79,7 @@
         "name": "Mes enregistrements sont-ils envoyés en ligne ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Non. L’analyse, l’écoute, les corrections et les exports restent sur votre ordinateur. Seule l’installation optionnelle de FFmpeg nécessite un téléchargement."
+          "text": "Non. L’analyse, l’écoute, les corrections et les exports se font sur votre ordinateur. L’interface s’ouvre dans votre navigateur via un serveur local accessible depuis votre machine seulement. Le seul téléchargement possible est l’installation de FFmpeg, si vous choisissez de produire des vidéos."
         }
       },
       {
@@ -71,15 +87,15 @@
         "name": "Que faut-il pour créer une vidéo ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Ajoutez au moins une image de fond et disposez de FFmpeg. S’il manque, ConcertCutter peut proposer de l’installer avant l’export."
+          "text": "Au moins une image de fond et FFmpeg. Si FFmpeg manque, la fenêtre d’export propose de l’installer avant le rendu."
         }
       },
       {
         "@type": "Question",
-        "name": "Comment désinstaller ConcertCutter ?",
+        "name": "Est-ce que ça installe quelque chose sur mon PC ?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "L’application est portable. Supprimez simplement ConcertCutter.exe. Le guide indique aussi où retirer les sauvegardes locales si vous souhaitez tout effacer."
+          "text": "Non. ConcertCutter est un seul fichier .exe autonome : ni Python, ni dépendance système, aucun assistant d’installation. Pour le retirer, mettez le fichier à la corbeille ; le guide indique où supprimer les reprises automatiques si vous voulez tout effacer."
         }
       }
     ]
@@ -128,27 +144,27 @@
         <div class="mx-auto max-w-4xl text-center">
           <div class="mb-6 inline-flex flex-wrap items-center justify-center gap-2 rounded-full border border-border bg-raised/80 px-3.5 py-1.5 text-xs text-muted"><span class="size-2 rounded-full bg-accent" aria-hidden="true"></span><span class="release-version font-semibold text-ink">v__APP_VERSION__</span><span aria-hidden="true">·</span><span>Windows 10 / 11</span><span aria-hidden="true">·</span><span>Gratuit et open source</span></div>
           <h1 class="text-4xl font-extrabold leading-[1.05] tracking-[-0.045em] text-ink sm:text-6xl lg:text-7xl">Découpez vos concerts.<br><span class="text-accent">Gardez la musique.</span></h1>
-          <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">ConcertCutter repère les passages à retirer, puis vous laisse écouter, ajuster et nommer chaque piste avant l’export. Vos fichiers restent sur votre ordinateur.</p>
+          <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl">ConcertCutter repère les passages à retirer, puis vous laisse écouter, ajuster et nommer chaque morceau avant l’export. Vos fichiers restent sur votre ordinateur.</p>
           <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary px-6 py-4 text-base" data-goatcounter-click="download-hero"><svg aria-hidden="true" viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></svg>Télécharger pour Windows <span class="release-file-size font-mono text-xs opacity-75">__DOWNLOAD_SIZE__</span></a>
             <a href="guide/" class="btn-secondary px-6 py-4" data-goatcounter-click="open-guide">Voir le guide complet</a>
           </div>
-          <ul class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-subtle" aria-label="Informations essentielles"><li>✓ Un fichier portable</li><li>✓ Aucun compte</li><li>✓ Sauvegarde automatique</li><li>✓ Sans installation</li></ul>
+          <ul class="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm text-subtle" aria-label="Informations essentielles"><li>✓ Un seul fichier .exe</li><li>✓ Aucun compte</li><li>✓ Sauvegarde automatique</li><li>✓ Aucun envoi en ligne</li></ul>
         </div>
         <figure id="demo" class="mx-auto mt-14 max-w-6xl scroll-mt-24">
           <div class="product-mockup" aria-hidden="true">
             <div class="mock-windowbar">
               <div class="flex min-w-0 items-center gap-2"><span class="mock-window-dot bg-[#ff6b6b]"></span><span class="mock-window-dot bg-[#ffd43b]"></span><span class="mock-window-dot bg-[#51cf66]"></span><span class="ml-2 truncate font-mono text-[10px] text-subtle sm:text-xs">ConcertCutter — concert_live.wav</span></div>
-              <div class="hidden items-center gap-2 text-[10px] text-subtle sm:flex"><span class="size-1.5 rounded-full bg-accent"></span>Analyse terminée · 12 pistes</div>
+              <div class="hidden items-center gap-2 text-[10px] text-subtle sm:flex"><span class="size-1.5 rounded-full bg-accent"></span>Analyse terminée · 12 morceaux</div>
             </div>
             <div class="mock-app">
               <aside class="mock-sidebar" aria-hidden="true">
-                <div class="px-3 pb-2 font-mono text-[9px] uppercase tracking-[0.18em] text-subtle">Pistes à exporter</div>
+                <div class="px-3 pb-2 font-mono text-[9px] uppercase tracking-[0.18em] text-subtle">Morceaux détectés</div>
                 <div class="mock-track mock-track-active"><span>01</span><div><strong>Ouverture</strong><small>04:26</small></div></div>
                 <div class="mock-track"><span>02</span><div><strong>Le long chemin</strong><small>05:12</small></div></div>
                 <div class="mock-track"><span>03</span><div><strong>Éclats de nuit</strong><small>03:48</small></div></div>
                 <div class="mock-track"><span>04</span><div><strong>Final électrique</strong><small>05:28</small></div></div>
-                <div class="mt-auto rounded-lg border border-border bg-app/60 p-3 text-[10px] leading-relaxed text-subtle"><strong class="block text-ink">12 pistes prêtes</strong>1 h 07 min conservées</div>
+                <div class="mt-auto rounded-lg border border-border bg-app/60 p-3 text-[10px] leading-relaxed text-subtle"><strong class="block text-ink">12 morceaux</strong>1 h 07 min conservées</div>
               </aside>
               <div class="mock-workspace">
                 <div class="mock-toolbar">
@@ -167,45 +183,48 @@
               </div>
             </div>
           </div>
-          <figcaption class="mt-4 text-center text-xs text-subtle">Un aperçu fidèle du fonctionnement : les zones cyan sont conservées, les zones orange sont retirées.</figcaption>
+          <figcaption class="mt-4 text-center text-xs text-subtle">Représentation de l’interface : en cyan les morceaux conservés, en orange les zones à retirer.</figcaption>
         </figure>
       </div>
     </section>
     <section id="workflow" class="border-b border-rule py-20 sm:py-24">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-2xl text-center"><p class="eyebrow">Une méthode simple</p><h2 class="section-title mt-3">Trois étapes, puis vous gardez la main.</h2><p class="mt-4 text-muted">L’analyse propose un découpage. Rien n’est exporté avant votre validation.</p></div>
-        <div class="mt-12 grid gap-5 md:grid-cols-3">
-          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">01 — OUVRIR</span><h3 class="mt-4 text-xl font-bold">Importez votre WAV</h3><p class="mt-3 leading-relaxed text-muted">La forme d’onde apparaît et l’écoute est disponible avant même l’analyse.</p></article>
-          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">02 — ANALYSER</span><h3 class="mt-4 text-xl font-bold">Repérez les transitions</h3><p class="mt-3 leading-relaxed text-muted">Les morceaux et zones plus calmes sont proposés séparément, avec un niveau de confiance.</p></article>
-          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">03 — EXPORTER</span><h3 class="mt-4 text-xl font-bold">Choisissez vos sorties</h3><p class="mt-3 leading-relaxed text-muted">Pistes WAV, concert continu, feuille CUE ou vidéo MP4 : vous cochez uniquement ce qu’il vous faut.</p></article>
+        <div class="mx-auto max-w-2xl text-center"><p class="eyebrow">Le déroulé</p><h2 class="section-title mt-3">Quatre étapes, simple et efficace.</h2><p class="mt-4 text-muted">L’analyse fait une proposition. Chaque frontière reste déplaçable, et aucun fichier n’est écrit tant que vous n’avez pas lancé l’export.</p></div>
+        <div class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">01 — OUVRIR</span><h3 class="mt-4 text-xl font-bold">Ouvrez votre WAV</h3><p class="mt-3 leading-relaxed text-muted">La forme d’onde s’affiche et l’écoute est disponible avant même l’analyse.</p></article>
+          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">02 — ANALYSER</span><h3 class="mt-4 text-xl font-bold">Obtenez un découpage</h3><p class="mt-3 leading-relaxed text-muted">Les morceaux ressortent en cyan, les zones à retirer en orange. C’est une proposition, pas un verdict.</p></article>
+          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">03 — CORRIGER</span><h3 class="mt-4 text-xl font-bold">Reprenez les frontières</h3><p class="mt-3 leading-relaxed text-muted">Écoutez chaque transition, déplacez une frontière, coupez, fusionnez, renommez. Le WAV d’origine n’est jamais modifié.</p></article>
+          <article class="glass-card rounded-2xl p-6"><span class="font-mono text-sm font-bold text-accent">04 — EXPORTER</span><h3 class="mt-4 text-xl font-bold">Choisissez vos sorties</h3><p class="mt-3 leading-relaxed text-muted">Morceaux séparés, concert en un seul fichier, feuille CUE ou vidéo MP4 : aucune sortie n’est cochée d’avance.</p></article>
         </div>
       </div>
     </section>
     <section id="features" class="border-b border-rule bg-surface/35 py-20 sm:py-24">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-3xl text-center"><p class="eyebrow">Contrôle total</p><h2 class="section-title mt-3">Tout le confort d’un studio, la simplicité en plus.</h2><p class="mt-5 text-base leading-relaxed text-muted sm:text-lg">L’analyse fait le gros du travail. Pour les transitions subtiles ou les solos improvisés, vous ajustez chaque détail sans vous perdre dans des réglages compliqués.</p></div>
+        <div class="mx-auto max-w-3xl text-center"><p class="eyebrow">Contrôle total</p><h2 class="section-title mt-3">L’analyse propose. Vous décidez.</h2><p class="mt-5 text-base leading-relaxed text-muted sm:text-lg">Une captation de salle, deux morceaux enchaînés sans respiration, quelqu’un qui parle pendant le solo : l’automatique atteint vite ses limites. Tout le reste de l’application sert à reprendre la main, frontière par frontière.</p></div>
         <div class="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3M9 14l3 3 3-3M12 17V4"/></svg></div><h3>Rien à enregistrer</h3><p>Votre travail est sauvegardé automatiquement. À la prochaine séance, vous retrouvez vos coupes, vos titres et vos réglages.</p></article>
-          <article class="feature-card"><div class="feature-icon feature-icon-cut"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="17" r="3"/><circle cx="6" cy="7" r="3"/><path d="m8.6 8.5 11 7M8.6 15.5l11-7"/></svg></div><h3>Des coupes sans risque</h3><p>Posez, déplacez ou supprimez une frontière sans abîmer l’audio d’origine. Vous gardez toujours la possibilité de revenir en arrière.</p></article>
-          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20 11 4M13 20l4-16M6 9h13M5 15h13"/></svg></div><h3>Des pistes bien rangées</h3><p>Les numéros restent stables même si vous décidez de ne pas exporter un morceau. Vos fichiers conservent le bon ordre.</p></article>
-          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4V5ZM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/></svg></div><h3>Pré-écoute instantanée</h3><p>Écoutez quelques secondes autour de chaque coupe et répétez le passage en boucle jusqu’à trouver la transition parfaite.</p></article>
-          <article class="feature-card"><div class="feature-icon feature-icon-cut"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-2v8l-4-2M7 9h6M7 13h4"/></svg></div><h3>Une vidéo prête à partager</h3><p>Ajoutez quelques photos et générez un diaporama MP4 avec les titres des morceaux, prêt pour YouTube ou vos proches.</p></article>
-          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a8 8 0 0 1 8 8v2M3 10l6 6M3 10l6-6"/></svg></div><h3>Vous pouvez tout annuler</h3><p>Déplacement, suppression, coupe ou renommage : l’historique conserve vos derniers gestes pour travailler l’esprit tranquille.</p></article>
+          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3M9 14l3 3 3-3M12 17V4"/></svg></div><h3>Aucune sauvegarde à penser</h3><p>Votre travail est enregistré au fil de l’eau. À la séance suivante, vous reprenez avec vos frontières, vos titres et vos réglages.</p></article>
+          <article class="feature-card"><div class="feature-icon feature-icon-cut"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="17" r="3"/><circle cx="6" cy="7" r="3"/><path d="m8.6 8.5 11 7M8.6 15.5l11-7"/></svg></div><h3>Des coupes sans risque</h3><p>Posez, déplacez ou supprimez une frontière : le WAV d’origine n’est jamais modifié. <kbd class="kbd">Ctrl</kbd> <kbd class="kbd">Z</kbd> annule, <kbd class="kbd">Ctrl</kbd> <kbd class="kbd">Y</kbd> rétablit.</p></article>
+          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 20 11 4M13 20l4-16M6 9h13M5 15h13"/></svg></div><h3>Une numérotation stable</h3><p>Si vous renoncez à exporter un morceau, les autres gardent leur numéro d’origine. L’ordre du concert reste lisible dans le dossier.</p></article>
+          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5 6 9H3v6h3l5 4V5ZM15 9a5 5 0 0 1 0 6M18 6a9 9 0 0 1 0 12"/></svg></div><h3>Une écoute au bon endroit</h3><p>Placez la tête de lecture dans la forme d’onde et bouclez le passage sous le curseur avec <kbd class="kbd">B</kbd>, jusqu’à poser la frontière au bon endroit.</p></article>
+          <article class="feature-card"><div class="feature-icon feature-icon-cut"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 10 4-2v8l-4-2M7 9h6M7 13h4"/></svg></div><h3>Une vidéo prête à partager</h3><p>Ajoutez une image de fond et obtenez un MP4 par morceau, ou le concert entier, avec les titres. De quoi publier ou simplement envoyer aux musiciens.</p></article>
+          <article class="feature-card"><div class="feature-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10h10a8 8 0 0 1 8 8v2M3 10l6 6M3 10l6-6"/></svg></div><h3>Une feuille CUE et des repères</h3><p>Le concert exporté en un seul fichier s’accompagne d’une feuille CUE et d’un fichier de repères : chaque morceau reste retrouvable dans un lecteur ou un éditeur.</p></article>
         </div>
-        <p class="mt-10 text-center"><a href="guide/#corriger" class="font-bold text-accent hover:text-accent-hover" data-goatcounter-click="open-guide">Découvrir les outils de correction dans le guide →</a></p>
+        <p class="mt-10 text-center"><a href="guide/#corriger" class="font-bold text-accent hover:text-accent-hover" data-goatcounter-click="open-guide">Voir les outils de correction dans le guide →</a></p>
       </div>
     </section>
     <section id="faq" class="border-b border-rule bg-surface/35 py-20 sm:py-24">
-      <div class="mx-auto max-w-3xl px-4 sm:px-6"><div class="text-center"><p class="eyebrow">Questions fréquentes</p><h2 class="section-title mt-3">Avant de télécharger</h2></div>
+      <div class="mx-auto max-w-3xl px-4 sm:px-6"><div class="text-center"><p class="eyebrow">Avant de télécharger</p><h2 class="section-title mt-3">FAQ</h2></div>
         <div class="mt-10 space-y-3" data-accordion>
-          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-format" id="faq-format-trigger">Quels fichiers puis-je ouvrir ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-format" role="region" aria-labelledby="faq-format-trigger" hidden>L’interface graphique ouvre les enregistrements WAV. Les outils en ligne de commande couvrent des traitements plus avancés décrits sur GitHub.</div></article>
-          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-local" id="faq-local-trigger">Mes enregistrements sont-ils envoyés en ligne ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-local" role="region" aria-labelledby="faq-local-trigger" hidden>Non. L’analyse, l’écoute, les corrections et les exports restent sur votre ordinateur. Seule l’installation optionnelle de FFmpeg nécessite un téléchargement.</div></article>
-          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-video" id="faq-video-trigger">Que faut-il pour créer une vidéo ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-video" role="region" aria-labelledby="faq-video-trigger" hidden>Ajoutez au moins une image de fond et disposez de FFmpeg. S’il manque, ConcertCutter peut proposer de l’installer avant l’export.</div></article>
-          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-install" id="faq-install-trigger">Comment désinstaller ConcertCutter ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-install" role="region" aria-labelledby="faq-install-trigger" hidden>L’application est portable. Supprimez simplement <code>ConcertCutter.exe</code>. Le guide indique aussi où retirer les sauvegardes locales si vous souhaitez tout effacer.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-smartscreen" id="faq-smartscreen-trigger">Windows bloque-t-il l’application ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-smartscreen" role="region" aria-labelledby="faq-smartscreen-trigger" hidden>Au premier lancement, c’est probable. L’exécutable n’est pas signé, alors SmartScreen affiche un avertissement parce qu’il ne reconnaît pas l’éditeur. Choisissez « Informations complémentaires » puis « Exécuter quand même », après avoir vérifié que le fichier vient bien de la release officielle. <a class="font-bold text-accent hover:text-accent-hover" href="guide/#smartscreen" data-goatcounter-click="open-guide">Le guide détaille l’écran</a> et la vérification de l’empreinte SHA-256.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-detection" id="faq-detection-trigger">Le découpage automatique est-il toujours juste ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-detection" role="region" aria-labelledby="faq-detection-trigger" hidden>Non, et l’application est faite pour ça. L’analyse s’appuie sur la baisse de niveau entre les morceaux : une captation de salle, deux morceaux enchaînés sans respiration ou une voix par-dessus la musique demandent des corrections. Toutes les frontières restent déplaçables, et vous pouvez en ajouter ou en retirer.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-format" id="faq-format-trigger">Quels fichiers puis-je ouvrir ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-format" role="region" aria-labelledby="faq-format-trigger" hidden>L’interface graphique ouvre les enregistrements WAV. Les outils en ligne de commande, décrits sur GitHub, couvrent le traitement par lot et des réglages plus fins.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-local" id="faq-local-trigger">Mes enregistrements sont-ils envoyés en ligne ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-local" role="region" aria-labelledby="faq-local-trigger" hidden>Non. L’analyse, l’écoute, les corrections et les exports se font sur votre ordinateur. L’interface s’ouvre dans votre navigateur via un serveur local accessible depuis votre machine seulement. Le seul téléchargement possible est l’installation de FFmpeg, si vous choisissez de produire des vidéos.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-video" id="faq-video-trigger">Que faut-il pour créer une vidéo ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-video" role="region" aria-labelledby="faq-video-trigger" hidden>Au moins une image de fond et FFmpeg. Si FFmpeg manque, la fenêtre d’export propose de l’installer avant le rendu.</div></article>
+          <article class="faq-item overflow-hidden rounded-xl border border-border bg-surface"><h3><button class="faq-trigger flex w-full items-center justify-between gap-4 p-5 text-left font-bold" type="button" aria-expanded="false" aria-controls="faq-install" id="faq-install-trigger">Est-ce que ça installe quelque chose sur mon PC ?<span class="faq-chevron text-subtle" aria-hidden="true">⌄</span></button></h3><div class="faq-panel px-5 pb-5 leading-relaxed text-muted" id="faq-install" role="region" aria-labelledby="faq-install-trigger" hidden>Non. ConcertCutter est un seul fichier <code>.exe</code> autonome : ni Python, ni dépendance système, aucun assistant d’installation. Pour le retirer, mettez le fichier à la corbeille ; <a class="font-bold text-accent hover:text-accent-hover" href="guide/#mise-a-jour" data-goatcounter-click="open-guide">le guide indique où supprimer les reprises automatiques</a> si vous voulez tout effacer.</div></article>
         </div><p class="mt-8 text-center"><a href="guide/#depannage" class="font-bold text-accent hover:text-accent-hover" data-goatcounter-click="open-guide">Consulter tout le guide et le dépannage →</a></p>
       </div>
     </section>
-    <section class="grid-bg hero-glow py-20 sm:py-24"><div class="mx-auto max-w-4xl px-4 text-center sm:px-6"><div class="glass-card rounded-3xl p-7 sm:p-12"><img src="assets/icon_128.png" width="64" height="64" alt="" class="mx-auto size-16 rounded-2xl"><h2 class="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">Votre concert, prêt à devenir un album.</h2><p class="mx-auto mt-4 max-w-xl text-muted">Téléchargez ConcertCutter, ouvrez votre WAV et gardez le dernier mot sur chaque coupe.</p><a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary mt-7" data-goatcounter-click="download-final">Télécharger pour Windows <span class="release-file-size font-mono text-xs">__DOWNLOAD_SIZE__</span></a></div></div></section>
+    <section class="grid-bg hero-glow py-20 sm:py-24"><div class="mx-auto max-w-4xl px-4 text-center sm:px-6"><div class="glass-card rounded-3xl p-7 sm:p-12"><img src="assets/icon_128.png" width="64" height="64" alt="" class="mx-auto size-16 rounded-2xl"><h2 class="mt-6 text-3xl font-extrabold tracking-tight sm:text-4xl">Votre concert, prêt à devenir un album.</h2><p class="mx-auto mt-4 max-w-xl text-muted">Téléchargez l’application, ouvrez votre WAV, et gardez le dernier mot sur chaque coupe.</p><a href="https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe" class="download-link-exe btn-primary mt-7" data-goatcounter-click="download-final">Télécharger pour Windows <span class="release-file-size font-mono text-xs">__DOWNLOAD_SIZE__</span></a></div></div></section>
   </main>
   <footer class="border-t border-rule py-10 text-sm text-subtle">
     <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-start lg:justify-between lg:px-8">
