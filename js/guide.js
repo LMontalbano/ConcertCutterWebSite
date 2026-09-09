@@ -7,17 +7,20 @@
   const empty = document.getElementById("shortcuts-empty");
   const tabs = [...document.querySelectorAll(".shortcut-tab")];
   let category = "all";
+  const language = document.documentElement.lang;
   function render() {
     if (!rows.length) return;
-    const query = search?.value.trim().toLocaleLowerCase("fr") || "";
+    const query = search?.value.trim().toLocaleLowerCase(language) || "";
     let visible = 0;
     for (const row of rows) {
       const matches = (category === "all" || row.dataset.category === category)
-        && (!query || (row.dataset.search || "").includes(query));
+        && (!query || row.textContent.toLocaleLowerCase(language).includes(query));
       row.hidden = !matches;
       if (matches) visible += 1;
     }
-    if (count) count.textContent = `${visible} commande${visible > 1 ? "s" : ""}`;
+    if (count) count.textContent = language === "fr"
+      ? `${visible} commande${visible > 1 ? "s" : ""}`
+      : `${visible} command${visible === 1 ? "" : "s"}`;
     empty?.classList.toggle("hidden", visible !== 0);
   }
   search?.addEventListener("input", render);

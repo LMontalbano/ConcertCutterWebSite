@@ -17,8 +17,11 @@
     }
     const nextTheme = theme === "dark" ? "light" : "dark";
     themeButtons.forEach((button) => {
-      button.setAttribute("aria-label", `Activer le thème ${nextTheme === "light" ? "clair" : "sombre"}`);
-      button.setAttribute("title", `Activer le thème ${nextTheme === "light" ? "clair" : "sombre"}`);
+      const label = root.lang === "fr"
+        ? `Activer le thème ${nextTheme === "light" ? "clair" : "sombre"}`
+        : `Switch to ${nextTheme} theme`;
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
       button.setAttribute("aria-pressed", String(theme === "light"));
     });
     themeImages.forEach((image) => {

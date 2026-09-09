@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const downloadUrl = "https://github.com/LMontalbano/ConcertCutter/releases/latest/download/ConcertCutter.exe";
+test.use({ locale: "fr-FR" });
 
 for (const width of [320, 390, 768, 1024, 1280]) {
   test(`landing responsive à ${width}px`, async ({ page }) => {

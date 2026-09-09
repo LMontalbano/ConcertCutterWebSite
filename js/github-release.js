@@ -8,7 +8,8 @@
   const dataset = document.currentScript?.dataset ?? {};
   const fallbackVersion = dataset.fallbackVersion?.trim() || "";
   const fallbackSize = dataset.fallbackSize?.trim() || "";
-  const formatBytes = (bytes) => !Number.isFinite(bytes) || bytes <= 0 ? fallbackSize : `${(bytes / 1024 / 1024).toLocaleString("fr-FR", { maximumFractionDigits: 1 })} Mo`;
+  const isFrench = document.documentElement.lang === "fr";
+  const formatBytes = (bytes) => !Number.isFinite(bytes) || bytes <= 0 ? fallbackSize : `${(bytes / 1024 / 1024).toLocaleString(isFrench ? "fr-FR" : "en-US", { maximumFractionDigits: 1 })} ${isFrench ? "Mo" : "MB"}`;
   document.querySelectorAll(".download-link-exe").forEach((link) => { link.href = fallbackUrl; });
   async function json(url) {
     const controller = new AbortController();
