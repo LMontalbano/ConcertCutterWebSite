@@ -12,6 +12,14 @@ Le site reste statique. Tailwind CSS est compilé avant le déploiement : aucun 
 
 Les pages restent lisibles sans JavaScript : la table des raccourcis est écrite dans le HTML et les panneaux repliés s’affichent tant que `js` n’est pas posé sur `<html>`.
 
+## Langues
+
+L’anglais est la langue par défaut, y compris sans JavaScript. Avec JavaScript, le site choisit la première langue prise en charge (`fr` ou `en`) dans les préférences du navigateur. Les variantes régionales, comme `fr-CA` et `en-GB`, sont reconnues. Si aucune préférence n’est prise en charge, le site reste en anglais.
+
+Les trois pages, leurs métadonnées et leurs commandes suivent ce choix. Les captures de l’application conservent leur contenu original.
+
+Les fichiers HTML sources restent en français. `locales/en.json` contient leur traduction anglaise ; ajouter ou mettre à jour l’entrée correspondante lors d’un changement de texte. La compilation échoue lorsqu’une traduction manque ou devient ambiguë. Elle produit du HTML anglais et embarque les textes français pour `js/language.js`, sans service de traduction externe ni redirection.
+
 ## Version affichée
 
 `site.config.json` est la seule source de la version et de la taille montrées sur les pages ; `npm run build` remplace les jetons `__APP_VERSION__` et `__DOWNLOAD_SIZE__` et échoue si l’un d’eux subsiste. À chaque release de ConcertCutter, mettre ce fichier à jour :
