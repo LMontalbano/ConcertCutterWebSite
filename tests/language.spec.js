@@ -9,7 +9,7 @@ for (const [locale, language] of [['fr-FR', 'fr'], ['fr-CA', 'fr'], ['en-US', 'e
       const fr = language === 'fr';
       await expect(page.locator('html')).toHaveAttribute('lang', language);
       await expect(page.locator('h1')).toContainText(fr ? 'Découpez vos concerts.' : 'Cut your concerts.');
-      await expect(page.locator('.release-file-size').first()).toHaveText(fr ? '32,6 Mo' : '32.6 MB');
+      await expect(page.locator('.release-file-size').first()).toHaveText(fr ? '28,1 Mo' : '28.1 MB');
       await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', fr ? 'fr_FR' : 'en_US');
       await expect(page.locator('.header-theme-toggle')).toHaveAttribute('aria-label', fr ? 'Activer le thème clair' : 'Switch to light theme');
 

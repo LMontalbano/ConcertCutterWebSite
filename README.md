@@ -34,8 +34,8 @@ ConcertCutter, mettre ce fichier à jour :
 
 ```json
 {
-  "appVersion": "3.0",
-  "downloadSize": "32,6 Mo",
+  "appVersion": "3.3",
+  "downloadSize": "28,1 Mo",
   "basePath": "/ConcertCutterWebSite"
 }
 ```
