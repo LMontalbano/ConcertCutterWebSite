@@ -22,7 +22,15 @@ Les fichiers HTML sources restent en français. `locales/en.json` contient leur 
 
 ## Version affichée
 
-`site.config.json` est la seule source de la version et de la taille montrées sur les pages ; `npm run build` remplace les jetons `__APP_VERSION__` et `__DOWNLOAD_SIZE__` et échoue si l’un d’eux subsiste. À chaque release de ConcertCutter, mettre ce fichier à jour :
+La dernière release stable renvoyée par l’API GitHub est la source de vérité à
+l’exécution : `js/github-release.js` actualise la version, la taille et le lien
+de téléchargement. `site.config.json` fournit uniquement les valeurs de secours
+rendues dans le HTML lorsque GitHub est indisponible ou que JavaScript est
+désactivé, ainsi que la version des métadonnées structurées statiques.
+
+`npm run build` remplace les jetons `__APP_VERSION__` et `__DOWNLOAD_SIZE__` par
+ces valeurs de secours et échoue si l’un d’eux subsiste. À chaque release de
+ConcertCutter, mettre ce fichier à jour :
 
 ```json
 {
