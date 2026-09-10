@@ -27,7 +27,7 @@ Les fichiers HTML sources restent en français. `locales/en.json` contient leur 
 ```json
 {
   "appVersion": "3.0",
-  "downloadSize": "28,1 Mo",
+  "downloadSize": "32,6 Mo",
   "basePath": "/ConcertCutterWebSite"
 }
 ```

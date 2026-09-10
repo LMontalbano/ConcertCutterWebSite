@@ -28,8 +28,13 @@ for (const [label, html] of [["landing", landing], ["guide", guide], ["404", not
 
 requireIn(landing, "landing", /data-goatcounter-click="download-hero"/, "événement du CTA hero absent");
 requireIn(landing, "landing", /"@type": "FAQPage"/, "données structurées FAQ absentes");
+requireIn(landing, "landing", /"softwareVersion": "3\.3"/, "version 3.3 absente des métadonnées");
+requireIn(landing, "landing", /data-fallback-version="v3\.3"/, "version de secours 3.3 absente");
+requireIn(landing, "landing", /contacts GitHub at launch/, "confidentialité du check de mise à jour absente");
 requireIn(guide, "guide", /id="shortcuts-search"/, "recherche des raccourcis absente");
 requireIn(guide, "guide", /<tbody id="shortcuts-body"[^>]*>\s*<tr/, "table des raccourcis non pré-rendue");
+requireIn(guide, "guide", /Automatic update/, "parcours de mise à jour automatique absent");
+requireIn(guide, "guide", /SHA256SUMS\.txt/, "lien de vérification SHA-256 absent");
 requireIn(notFound, "404", /<main\b/, "élément <main> absent");
 
 // Les questions existent en double : dans l’accordéon et dans le JSON-LD.
